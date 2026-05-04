@@ -3,172 +3,197 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Mr Bee's Brewery — Honey-Crafted Beer, Buzzing With Flavour</title>
-  <meta name="description" content="Mr Bee's Brewery — small-batch honey-infused craft beer brewed locally with passion and pollen. Visit our taproom, book a tour, or shop online." />
+  <title>Mr Bee's Brewery — Honey-Crafted Craft Beer</title>
+  <meta name="description" content="Award-winning small-batch honey-infused craft beer, brewed by hand in Meadowbrook since 2014. Visit our taproom or book a tour." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,800;9..144,900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,800;1,700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🐝%3C/text%3E%3C/svg%3E" />
 </head>
 <body>
-  <!-- Floating bee swarm decoration -->
-  <div class="bee-swarm" aria-hidden="true">
-    <svg class="floater floater-1" viewBox="0 0 80 60"><use href="#bee-icon"/></svg>
-    <svg class="floater floater-2" viewBox="0 0 80 60"><use href="#bee-icon"/></svg>
-    <svg class="floater floater-3" viewBox="0 0 80 60"><use href="#bee-icon"/></svg>
-  </div>
 
-  <!-- Reusable SVG defs -->
-  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <!-- SVG sprite -->
+  <svg width="0" height="0" style="position:absolute;pointer-events:none" aria-hidden="true">
     <defs>
-      <symbol id="bee-icon" viewBox="0 0 80 60">
-        <ellipse cx="20" cy="20" rx="16" ry="12" fill="rgba(255,255,255,0.85)" opacity="0.7"/>
-        <ellipse cx="60" cy="20" rx="16" ry="12" fill="rgba(255,255,255,0.85)" opacity="0.7"/>
-        <ellipse cx="40" cy="35" rx="22" ry="15" fill="#2c1810"/>
-        <rect x="22" y="25" width="6" height="20" fill="#ffc107"/>
-        <rect x="36" y="22" width="8" height="26" fill="#ffc107"/>
-        <rect x="52" y="25" width="6" height="20" fill="#ffc107"/>
-        <circle cx="32" cy="30" r="2.5" fill="#fff"/>
-        <circle cx="32" cy="30" r="1.2" fill="#2c1810"/>
-        <path d="M58 32 q8 -2 12 4" stroke="#2c1810" stroke-width="2" fill="none" stroke-linecap="round"/>
-        <circle cx="70" cy="36" r="1.5" fill="#2c1810"/>
+      <symbol id="bee" viewBox="0 0 80 60">
+        <ellipse cx="20" cy="18" rx="15" ry="11" fill="rgba(255,255,255,0.82)" opacity="0.75"/>
+        <ellipse cx="60" cy="18" rx="15" ry="11" fill="rgba(255,255,255,0.82)" opacity="0.75"/>
+        <ellipse cx="40" cy="34" rx="21" ry="14" fill="#1c110a"/>
+        <rect x="23" y="24" width="5" height="18" rx="2" fill="#e8a000"/>
+        <rect x="37" y="21" width="6" height="24" rx="2" fill="#e8a000"/>
+        <rect x="52" y="24" width="5" height="18" rx="2" fill="#e8a000"/>
+        <circle cx="100" cy="38" r="1.5" fill="#1c110a"/>
       </symbol>
-
-      <symbol id="hex" viewBox="0 0 100 115">
-        <polygon points="50,2 96,27 96,87 50,112 4,87 4,27" fill="none" stroke="currentColor" stroke-width="3"/>
+      <symbol id="arrow-right" viewBox="0 0 20 20">
+        <path d="M4 10h12M11 5l5 5-5 5" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      </symbol>
+      <symbol id="hex-outline" viewBox="0 0 100 115">
+        <polygon points="50,2 96,27 96,87 50,112 4,87 4,27"/>
       </symbol>
     </defs>
   </svg>
 
+  <!-- Scroll progress -->
+  <div class="progress-bar" id="progressBar" aria-hidden="true"></div>
+
+  <!-- Announcement strip -->
+  <div class="announce-strip">
+    <div class="container">
+      <span class="announce-dot"></span>
+      <span>New seasonal release: <strong>Winter Wildflower Wit</strong> — available now in the taproom</span>
+      <a href="#visit" class="announce-link">Visit us <svg viewBox="0 0 20 20" width="14" height="14"><use href="#arrow-right"/></svg></a>
+    </div>
+  </div>
+
   <!-- NAV -->
-  <header class="nav-wrap">
+  <header class="nav-wrap" id="navbar">
     <nav class="nav container">
-      <a class="brand" href="#top" aria-label="Mr Bee's Brewery home">
-        <span class="brand-mark" aria-hidden="true">
-          <svg viewBox="0 0 80 60"><use href="#bee-icon"/></svg>
+      <a class="brand" href="#top" aria-label="Mr Bee's Brewery">
+        <span class="brand-hex" aria-hidden="true">
+          <svg viewBox="0 0 100 115" fill="none">
+            <polygon points="50,2 96,27 96,87 50,112 4,87 4,27" fill="#e8a000" stroke="#1c110a" stroke-width="2"/>
+            <text x="50" y="70" text-anchor="middle" font-size="44" dominant-baseline="middle">🐝</text>
+          </svg>
         </span>
         <span class="brand-text">
-          <span class="brand-mr">Mr Bee's</span>
-          <span class="brand-sub">Brewery Co.</span>
+          <span class="brand-name">Mr Bee's</span>
+          <span class="brand-tag">Brewery Co.</span>
         </span>
       </a>
-      <ul class="nav-links">
-        <li><a href="#brews">Our Brews</a></li>
-        <li><a href="#story">Story</a></li>
-        <li><a href="#stats">By the Numbers</a></li>
+
+      <ul class="nav-links" id="navLinks">
+        <li><a href="#brews">Brews</a></li>
+        <li><a href="#story">Our Story</a></li>
+        <li><a href="#stats">Heritage</a></li>
         <li><a href="#gallery">Taproom</a></li>
         <li><a href="#testimonials">Reviews</a></li>
         <li><a href="#visit">Visit</a></li>
       </ul>
-      <a class="btn btn-primary nav-cta" href="#visit">Book a Tour</a>
-      <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
-        <span></span><span></span><span></span>
-      </button>
+
+      <div class="nav-actions">
+        <a class="btn btn-outline" href="#visit">Book a Tour</a>
+        <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation" aria-expanded="false">
+          <span></span><span></span>
+        </button>
+      </div>
     </nav>
   </header>
 
   <!-- HERO -->
   <section id="top" class="hero">
-    <div class="honeycomb-bg" aria-hidden="true"></div>
+    <div class="hero-bg" aria-hidden="true">
+      <div class="hero-hex-grid">
+        <svg class="bg-hex bh1" viewBox="0 0 100 115" fill="none"><polygon points="50,2 96,27 96,87 50,112 4,87 4,27"/></svg>
+        <svg class="bg-hex bh2" viewBox="0 0 100 115" fill="none"><polygon points="50,2 96,27 96,87 50,112 4,87 4,27"/></svg>
+        <svg class="bg-hex bh3" viewBox="0 0 100 115" fill="none"><polygon points="50,2 96,27 96,87 50,112 4,87 4,27"/></svg>
+        <svg class="bg-hex bh4" viewBox="0 0 100 115" fill="none"><polygon points="50,2 96,27 96,87 50,112 4,87 4,27"/></svg>
+      </div>
+    </div>
+
     <div class="hero-inner container">
       <div class="hero-copy">
-        <span class="eyebrow">
-          <span class="dot"></span> Locally brewed since 2014
-        </span>
-        <h1 class="hero-title">
-          Honey-crafted <span class="accent">craft beer</span>,<br/>
-          buzzing with <em>flavour.</em>
-        </h1>
-        <p class="hero-lead">
-          Small-batch ales infused with raw local honey from our own apiary. Pull up a stool — every pour tells the story of the hive.
-        </p>
-        <div class="hero-ctas">
-          <a class="btn btn-primary btn-lg" href="#brews">
-            Taste the Brews
-            <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><path d="M4 10h12M11 5l5 5-5 5" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
-          </a>
-          <a class="btn btn-ghost btn-lg" href="#story">Our Story</a>
+        <div class="hero-label">
+          <span class="label-line"></span>
+          <span>Meadowbrook · Est. 2014</span>
         </div>
-        <div class="hero-meta">
-          <div class="meta-item">
-            <strong>4.9★</strong>
-            <span>Google reviews</span>
+        <h1>
+          Honey-crafted.<br/>
+          <em>Hive to glass.</em>
+        </h1>
+        <p class="hero-lead">Small-batch ales brewed by hand with raw honey from our own forty-hive apiary. Every pour carries the character of the meadow.</p>
+        <div class="hero-ctas">
+          <a class="btn btn-primary" href="#brews">
+            Explore the Taplist
+            <svg viewBox="0 0 20 20" width="16" height="16"><use href="#arrow-right"/></svg>
+          </a>
+          <a class="btn btn-ghost" href="#story">Our Story</a>
+        </div>
+        <div class="hero-proof">
+          <div class="proof-item">
+            <strong>4.9</strong>
+            <span>★ Google · 840+ reviews</span>
           </div>
-          <div class="meta-divider"></div>
-          <div class="meta-item">
+          <div class="proof-sep"></div>
+          <div class="proof-item">
             <strong>27</strong>
-            <span>Awards won</span>
+            <span>Industry awards</span>
           </div>
-          <div class="meta-divider"></div>
-          <div class="meta-item">
+          <div class="proof-sep"></div>
+          <div class="proof-item">
             <strong>100%</strong>
-            <span>Local honey</span>
+            <span>Estate honey</span>
           </div>
         </div>
       </div>
 
       <div class="hero-visual" aria-hidden="true">
-        <div class="hex-stack">
-          <svg class="hex hex-a" viewBox="0 0 100 115"><polygon points="50,2 96,27 96,87 50,112 4,87 4,27"/></svg>
-          <svg class="hex hex-b" viewBox="0 0 100 115"><polygon points="50,2 96,27 96,87 50,112 4,87 4,27"/></svg>
-          <svg class="hex hex-c" viewBox="0 0 100 115"><polygon points="50,2 96,27 96,87 50,112 4,87 4,27"/></svg>
-        </div>
-        <div class="bee-mascot">
-          <svg viewBox="0 0 200 200">
-            <!-- wings -->
-            <ellipse cx="70" cy="70" rx="38" ry="28" fill="rgba(255,255,255,0.7)" class="wing wing-l"/>
-            <ellipse cx="130" cy="70" rx="38" ry="28" fill="rgba(255,255,255,0.7)" class="wing wing-r"/>
-            <!-- body -->
-            <ellipse cx="100" cy="115" rx="62" ry="48" fill="#2c1810"/>
-            <rect x="56" y="92" width="14" height="46" fill="#ffc107"/>
-            <rect x="80" y="80" width="18" height="60" fill="#ffc107"/>
-            <rect x="108" y="80" width="18" height="60" fill="#ffc107"/>
-            <rect x="136" y="92" width="14" height="46" fill="#ffc107"/>
-            <!-- head -->
-            <circle cx="100" cy="78" r="28" fill="#2c1810"/>
-            <circle cx="91" cy="74" r="6" fill="#fff"/>
-            <circle cx="109" cy="74" r="6" fill="#fff"/>
-            <circle cx="91" cy="75" r="3" fill="#2c1810"/>
-            <circle cx="109" cy="75" r="3" fill="#2c1810"/>
-            <!-- smile -->
-            <path d="M90 88 Q100 96 110 88" stroke="#ffc107" stroke-width="3" fill="none" stroke-linecap="round"/>
-            <!-- antennae -->
-            <path d="M90 56 Q86 42 78 38" stroke="#2c1810" stroke-width="3" fill="none" stroke-linecap="round"/>
-            <path d="M110 56 Q114 42 122 38" stroke="#2c1810" stroke-width="3" fill="none" stroke-linecap="round"/>
-            <circle cx="78" cy="38" r="4" fill="#ffc107"/>
-            <circle cx="122" cy="38" r="4" fill="#ffc107"/>
-            <!-- mug in hand -->
-            <rect x="138" y="120" width="34" height="36" rx="4" fill="#ffa000"/>
-            <rect x="142" y="124" width="26" height="14" fill="#fff8d6"/>
-            <path d="M172 128 q14 6 0 22" stroke="#ffa000" stroke-width="6" fill="none"/>
-          </svg>
-        </div>
-        <div class="badge-pop">
-          <span>🍯</span>
-          <div>
-            <strong>Award Winning</strong>
-            <small>Best Craft Brewery '24</small>
+        <div class="mascot-wrap">
+          <div class="mascot-ring ring-a"></div>
+          <div class="mascot-ring ring-b"></div>
+          <div class="mascot-art">
+            <svg viewBox="0 0 200 220" fill="none">
+              <!-- Wings -->
+              <ellipse cx="66" cy="72" rx="40" ry="30" fill="rgba(255,255,255,0.72)" class="wing wl"/>
+              <ellipse cx="134" cy="72" rx="40" ry="30" fill="rgba(255,255,255,0.72)" class="wing wr"/>
+              <!-- Body -->
+              <ellipse cx="100" cy="130" rx="58" ry="46" fill="#1c110a"/>
+              <rect x="58"  y="102" width="12" height="50" rx="6" fill="#e8a000"/>
+              <rect x="80"  y="92"  width="14" height="64" rx="7" fill="#e8a000"/>
+              <rect x="106" y="92"  width="14" height="64" rx="7" fill="#e8a000"/>
+              <rect x="130" y="102" width="12" height="50" rx="6" fill="#e8a000"/>
+              <!-- Head -->
+              <circle cx="100" cy="88" r="30" fill="#1c110a"/>
+              <circle cx="90"  cy="84" r="7"  fill="white"/>
+              <circle cx="110" cy="84" r="7"  fill="white"/>
+              <circle cx="90"  cy="85" r="3.5" fill="#1c110a"/>
+              <circle cx="110" cy="85" r="3.5" fill="#1c110a"/>
+              <circle cx="91"  cy="84" r="1.2" fill="white"/>
+              <circle cx="111" cy="84" r="1.2" fill="white"/>
+              <!-- Smile -->
+              <path d="M88 101 Q100 110 112 101" stroke="#e8a000" stroke-width="3" stroke-linecap="round"/>
+              <!-- Antennae -->
+              <path d="M88 64 Q82 46 74 40" stroke="#1c110a" stroke-width="2.5" stroke-linecap="round"/>
+              <path d="M112 64 Q118 46 126 40" stroke="#1c110a" stroke-width="2.5" stroke-linecap="round"/>
+              <circle cx="74"  cy="38" r="5" fill="#e8a000"/>
+              <circle cx="126" cy="38" r="5" fill="#e8a000"/>
+              <!-- Mug -->
+              <rect x="140" y="136" width="36" height="40" rx="5" fill="#bf8500"/>
+              <rect x="144" y="140" width="28" height="16" rx="3" fill="#fff3cc"/>
+              <path d="M176 142 q16 8 0 26" stroke="#bf8500" stroke-width="7" stroke-linecap="round" fill="none"/>
+              <text x="147" y="175" font-size="9" fill="#fff3cc" font-family="sans-serif" font-weight="bold">HONEY</text>
+            </svg>
           </div>
+          <div class="mascot-badge">
+            <div class="badge-icon">🏆</div>
+            <div class="badge-copy">
+              <strong>Best Brewery 2024</strong>
+              <small>World Beer Awards</small>
+            </div>
+          </div>
+          <div class="floating-bee fb1" aria-hidden="true"><svg viewBox="0 0 80 60" width="32"><use href="#bee"/></svg></div>
+          <div class="floating-bee fb2" aria-hidden="true"><svg viewBox="0 0 80 60" width="24"><use href="#bee"/></svg></div>
         </div>
       </div>
     </div>
-    <div class="scroll-cue" aria-hidden="true">
-      <span></span> Scroll
+
+    <div class="hero-scroll-cue" aria-hidden="true">
+      <div class="cue-line"></div>
+      <span>Scroll</span>
     </div>
   </section>
 
-  <!-- LOGO STRIP -->
-  <section class="logo-strip" aria-label="As featured in">
+  <!-- AS SEEN IN -->
+  <section class="press-bar" aria-label="Press coverage">
     <div class="container">
-      <p class="strip-label">As featured in</p>
-      <div class="strip-grid">
-        <span>CRAFT BEER MONTHLY</span>
-        <span>HOPS &amp; HONEY</span>
-        <span>THE BREWERS GUILD</span>
-        <span>LOCAL EATS</span>
-        <span>BBC GOOD FOOD</span>
-        <span>WORLD BEER AWARDS</span>
+      <span class="press-label">As featured in</span>
+      <div class="press-logos">
+        <span>Craft Beer Monthly</span>
+        <span>Hops &amp; Honey</span>
+        <span>The Brewers Guild</span>
+        <span>BBC Good Food</span>
+        <span>World Beer Awards</span>
+        <span>The Guardian</span>
       </div>
     </div>
   </section>
@@ -176,64 +201,85 @@
   <!-- BREWS -->
   <section id="brews" class="section brews">
     <div class="container">
-      <header class="section-head">
-        <span class="kicker">The Hive Selection</span>
-        <h2>Liquid gold, eight ways.</h2>
-        <p>Every brew starts with raw honey from our apiary, then meets the hops, malts and wild yeast that give it its sting.</p>
-      </header>
-
+      <div class="section-head">
+        <div class="section-label">The Hive Selection</div>
+        <h2>Eight expressions<br/>of the meadow.</h2>
+        <p>Each brew begins in our apiary. What happens next depends on the season, the yeast, and a little patience.</p>
+      </div>
       <div class="brews-grid">
-        <article class="brew-card" style="--clr:#ffb300;">
-          <div class="brew-can">
-            <div class="can">
-              <span class="can-label">Honey<br/>Haze</span>
+        <article class="brew-card" data-color="#d48c00">
+          <div class="brew-card-top">
+            <div class="brew-can-wrap">
+              <div class="brew-can" style="--can-clr:#d48c00">
+                <span class="can-name">HONEY<br/>HAZE</span>
+                <span class="can-abv">6.2%</span>
+              </div>
             </div>
+            <span class="brew-badge">Best Seller</span>
           </div>
-          <h3>Honey Haze IPA</h3>
-          <p class="brew-meta">Hazy IPA · 6.2% ABV</p>
-          <p>Tropical, juicy and finished with a generous spoonful of orange-blossom honey.</p>
-          <span class="brew-tag">Best Seller</span>
+          <div class="brew-card-body">
+            <h3>Honey Haze IPA</h3>
+            <p class="brew-style">Hazy IPA · 6.2% ABV · IBU 45</p>
+            <p>Tropical and juicy with a generous pour of orange-blossom honey. Soft bitterness, long finish.</p>
+          </div>
         </article>
 
-        <article class="brew-card" style="--clr:#ff8a00;">
-          <div class="brew-can">
-            <div class="can">
-              <span class="can-label">Pollen<br/>Pale</span>
+        <article class="brew-card" data-color="#b56800">
+          <div class="brew-card-top">
+            <div class="brew-can-wrap">
+              <div class="brew-can" style="--can-clr:#b56800">
+                <span class="can-name">POLLEN<br/>PALE</span>
+                <span class="can-abv">4.8%</span>
+              </div>
             </div>
+            <span class="brew-badge">Session</span>
           </div>
-          <h3>Pollen Pale Ale</h3>
-          <p class="brew-meta">Pale Ale · 4.8% ABV</p>
-          <p>Crisp, citrusy and dangerously easy. Our gateway pour for hop-curious newcomers.</p>
-          <span class="brew-tag">Crowd Pleaser</span>
+          <div class="brew-card-body">
+            <h3>Pollen Pale Ale</h3>
+            <p class="brew-style">Pale Ale · 4.8% ABV · IBU 32</p>
+            <p>Crisp and citrusy — our most approachable pour. Light body, dry finish, dangerously easy.</p>
+          </div>
         </article>
 
-        <article class="brew-card" style="--clr:#5d3a1a;">
-          <div class="brew-can">
-            <div class="can">
-              <span class="can-label">Comb<br/>Stout</span>
+        <article class="brew-card" data-color="#2a1205">
+          <div class="brew-card-top">
+            <div class="brew-can-wrap">
+              <div class="brew-can" style="--can-clr:#3a1a06">
+                <span class="can-name">COMB<br/>STOUT</span>
+                <span class="can-abv">5.6%</span>
+              </div>
             </div>
+            <span class="brew-badge award">Award '24</span>
           </div>
-          <h3>Honeycomb Stout</h3>
-          <p class="brew-meta">Milk Stout · 5.6% ABV</p>
-          <p>Velvet body, notes of dark chocolate, espresso and a sweet honeycomb finish.</p>
-          <span class="brew-tag">Award '24</span>
+          <div class="brew-card-body">
+            <h3>Honeycomb Stout</h3>
+            <p class="brew-style">Milk Stout · 5.6% ABV · IBU 28</p>
+            <p>Velvet body with dark chocolate, espresso and a distinctly honeyed finish. A fireplace in a glass.</p>
+          </div>
         </article>
 
-        <article class="brew-card" style="--clr:#e8b75a;">
-          <div class="brew-can">
-            <div class="can">
-              <span class="can-label">Queen<br/>Bee</span>
+        <article class="brew-card" data-color="#c49a30">
+          <div class="brew-card-top">
+            <div class="brew-can-wrap">
+              <div class="brew-can" style="--can-clr:#a07820">
+                <span class="can-name">QUEEN<br/>BEE</span>
+                <span class="can-abv">5.9%</span>
+              </div>
             </div>
+            <span class="brew-badge limited">Limited</span>
           </div>
-          <h3>Queen Bee Saison</h3>
-          <p class="brew-meta">Farmhouse Saison · 5.9% ABV</p>
-          <p>Peppery, dry and fruity, fermented with our wild house yeast culture.</p>
-          <span class="brew-tag">Limited Run</span>
+          <div class="brew-card-body">
+            <h3>Queen Bee Saison</h3>
+            <p class="brew-style">Farmhouse Saison · 5.9% ABV · IBU 22</p>
+            <p>Peppery, bone-dry, and fruited with wild yeast character. The meadow in full bloom.</p>
+          </div>
         </article>
       </div>
-
       <div class="brews-foot">
-        <a href="#visit" class="btn btn-dark btn-lg">See full taplist →</a>
+        <a href="#visit" class="btn btn-dark">
+          View full taplist
+          <svg viewBox="0 0 20 20" width="16" height="16"><use href="#arrow-right"/></svg>
+        </a>
       </div>
     </div>
   </section>
@@ -241,70 +287,88 @@
   <!-- STORY -->
   <section id="story" class="section story">
     <div class="container story-grid">
-      <div class="story-art" aria-hidden="true">
-        <div class="hex-frame">
-          <svg viewBox="0 0 100 115"><polygon points="50,2 96,27 96,87 50,112 4,87 4,27" fill="none" stroke="#2c1810" stroke-width="2"/></svg>
+      <div class="story-media" aria-hidden="true">
+        <div class="story-hex-wrap">
+          <svg class="story-hex-svg" viewBox="0 0 100 115" fill="none">
+            <polygon points="50,2 96,27 96,87 50,112 4,87 4,27" fill="#f5e8c8" stroke="#d4a820" stroke-width="1"/>
+          </svg>
+          <div class="story-inner-art">
+            <div class="apiary-visual">🏡</div>
+          </div>
         </div>
-        <div class="story-card story-card-1">
-          <span class="card-num">01</span>
-          <strong>The Apiary</strong>
-          <p>Forty hives nestled in wildflower meadows on the edge of town.</p>
+        <div class="story-stat-card sc1">
+          <span class="sc-num">40</span>
+          <span class="sc-label">Hives on site</span>
         </div>
-        <div class="story-card story-card-2">
-          <span class="card-num">02</span>
-          <strong>The Brewhouse</strong>
-          <p>Twin 10-barrel kettles, hand-pitched yeast and a lot of patience.</p>
+        <div class="story-stat-card sc2">
+          <span class="sc-num">10bbl</span>
+          <span class="sc-label">Brew kettle size</span>
         </div>
-        <div class="story-card story-card-3">
-          <span class="card-num">03</span>
-          <strong>The Pour</strong>
-          <p>Served fresh from cellar to glass in the warmest taproom in the county.</p>
+        <div class="story-stat-card sc3">
+          <span class="sc-num">0</span>
+          <span class="sc-label">Carbon footprint</span>
         </div>
       </div>
 
       <div class="story-copy">
-        <span class="kicker">Our Story</span>
-        <h2>From a backyard hive to your favourite local.</h2>
-        <p>It started with a single hive Mr Bee inherited from his grandfather, a trickle of honey, and a wild idea: <em>what if you could taste a meadow in a pint?</em></p>
-        <p>A decade later, we still brew everything by hand in small batches in our converted barn. We share it across the bar with the same neighbours who first cheered us on, alongside the new friends who keep finding their way to our door.</p>
-        <ul class="story-points">
-          <li>Independent &amp; family-run</li>
-          <li>Carbon-neutral brewhouse</li>
-          <li>Spent grain donated to local farms</li>
+        <div class="section-label">Our Story</div>
+        <h2>From a single hive to a beloved local institution.</h2>
+        <p>It started with one hive, a grandfather's legacy, and the kind of curiosity that refuses to stay quiet. Mr Bee set out to answer a simple question: <em>could you taste a wildflower meadow in a pint of beer?</em></p>
+        <p>Ten years later, the answer is still yes — and we've got forty hives and twenty-seven awards to prove it. Everything is brewed by hand in our converted Victorian barn, using honey harvested that same morning.</p>
+        <ul class="story-values">
+          <li>
+            <span class="val-icon">🌱</span>
+            <div>
+              <strong>Carbon-neutral brewhouse</strong>
+              <span>Solar-powered, zero-waste processing</span>
+            </div>
+          </li>
+          <li>
+            <span class="val-icon">🐝</span>
+            <div>
+              <strong>Estate apiary</strong>
+              <span>All honey sourced from our own forty hives</span>
+            </div>
+          </li>
+          <li>
+            <span class="val-icon">🌾</span>
+            <div>
+              <strong>Circular brewing</strong>
+              <span>Spent grain donated to three local farms</span>
+            </div>
+          </li>
         </ul>
-        <a href="#visit" class="btn btn-primary">Plan your visit</a>
+        <a href="#visit" class="btn btn-primary">Plan your visit <svg viewBox="0 0 20 20" width="16" height="16"><use href="#arrow-right"/></svg></a>
       </div>
     </div>
   </section>
 
   <!-- STATS -->
   <section id="stats" class="section stats">
-    <div class="honey-drip" aria-hidden="true"></div>
     <div class="container">
-      <header class="section-head light">
-        <span class="kicker">By the Numbers</span>
-        <h2>A decade of buzzing.</h2>
-      </header>
-      <div class="stats-grid">
-        <div class="stat">
-          <span class="stat-num" data-count="11">0</span>
-          <span class="stat-suffix">+</span>
+      <div class="section-head light">
+        <div class="section-label light">By the numbers</div>
+        <h2>A decade of dedication<br/>to the craft.</h2>
+      </div>
+      <div class="stats-row">
+        <div class="stat-item">
+          <span class="stat-num" data-count="11">0</span><span class="stat-suf">+</span>
           <p>Years brewing</p>
         </div>
-        <div class="stat">
-          <span class="stat-num" data-count="42">0</span>
-          <span class="stat-suffix"></span>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <span class="stat-num" data-count="42">0</span><span class="stat-suf"></span>
           <p>Active hives</p>
         </div>
-        <div class="stat">
-          <span class="stat-num" data-count="187000">0</span>
-          <span class="stat-suffix">+</span>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <span class="stat-num" data-count="187000">0</span><span class="stat-suf">+</span>
           <p>Pints poured</p>
         </div>
-        <div class="stat">
-          <span class="stat-num" data-count="27">0</span>
-          <span class="stat-suffix"></span>
-          <p>Awards on the wall</p>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <span class="stat-num" data-count="27">0</span><span class="stat-suf"></span>
+          <p>Industry awards</p>
         </div>
       </div>
     </div>
@@ -313,47 +377,66 @@
   <!-- GALLERY -->
   <section id="gallery" class="section gallery">
     <div class="container">
-      <header class="section-head">
-        <span class="kicker">In the Taproom</span>
-        <h2>Come see where the magic ferments.</h2>
-        <p>A peek inside the brewhouse, the hives and the long-table evenings that make Mr Bee's home.</p>
-      </header>
+      <div class="section-head">
+        <div class="section-label">Inside the Hive</div>
+        <h2>Where it all<br/>comes together.</h2>
+        <p>A working brewery, a living apiary, and a taproom that feels like coming home.</p>
+      </div>
+
       <div class="gallery-grid">
-        <figure class="gal gal-1">
-          <div class="gal-art" data-art="brewhouse">
-            <span class="gal-emoji">🍺</span>
+        <figure class="gal-item gi-1">
+          <div class="gal-fill" style="--g1:#d48c00;--g2:#7a4a00">
+            <div class="gal-icon">🍺</div>
+            <div class="gal-overlay">
+              <div class="gal-tag">Brewhouse</div>
+              <p>Cellar pour, fresh from the conditioning tank</p>
+            </div>
           </div>
-          <figcaption>Cellar pour, fresh from the tank</figcaption>
         </figure>
-        <figure class="gal gal-2">
-          <div class="gal-art" data-art="hive">
-            <span class="gal-emoji">🐝</span>
+        <figure class="gal-item gi-2">
+          <div class="gal-fill" style="--g1:#f5c842;--g2:#c07a00">
+            <div class="gal-icon">🐝</div>
+            <div class="gal-overlay">
+              <div class="gal-tag">Apiary</div>
+              <p>Morning inspection of hive No. 14</p>
+            </div>
           </div>
-          <figcaption>Inspecting hive #14</figcaption>
         </figure>
-        <figure class="gal gal-3">
-          <div class="gal-art" data-art="taproom">
-            <span class="gal-emoji">🥂</span>
+        <figure class="gal-item gi-3">
+          <div class="gal-fill" style="--g1:#3a1a06;--g2:#1c110a">
+            <div class="gal-icon">🥂</div>
+            <div class="gal-overlay">
+              <div class="gal-tag">Taproom</div>
+              <p>Friday evening at the long table</p>
+            </div>
           </div>
-          <figcaption>Friday at the long table</figcaption>
         </figure>
-        <figure class="gal gal-4">
-          <div class="gal-art" data-art="honey">
-            <span class="gal-emoji">🍯</span>
+        <figure class="gal-item gi-4">
+          <div class="gal-fill" style="--g1:#f0d080;--g2:#b87800">
+            <div class="gal-icon">🍯</div>
+            <div class="gal-overlay">
+              <div class="gal-tag">Apiary</div>
+              <p>Raw orange-blossom honey, same-day harvest</p>
+            </div>
           </div>
-          <figcaption>Raw orange-blossom, this morning</figcaption>
         </figure>
-        <figure class="gal gal-5">
-          <div class="gal-art" data-art="hops">
-            <span class="gal-emoji">🌾</span>
+        <figure class="gal-item gi-5">
+          <div class="gal-fill" style="--g1:#8a6a3a;--g2:#4a3010">
+            <div class="gal-icon">🌾</div>
+            <div class="gal-overlay">
+              <div class="gal-tag">Brewhouse</div>
+              <p>The hop room — pure living aroma</p>
+            </div>
           </div>
-          <figcaption>The hop room — pure aroma</figcaption>
         </figure>
-        <figure class="gal gal-6">
-          <div class="gal-art" data-art="tour">
-            <span class="gal-emoji">📷</span>
+        <figure class="gal-item gi-6">
+          <div class="gal-fill" style="--g1:#c06000;--g2:#1c110a">
+            <div class="gal-icon">📸</div>
+            <div class="gal-overlay">
+              <div class="gal-tag">Tours</div>
+              <p>Saturday guided brewery tour</p>
+            </div>
           </div>
-          <figcaption>Saturday brewery tour</figcaption>
         </figure>
       </div>
     </div>
@@ -362,133 +445,176 @@
   <!-- TESTIMONIALS -->
   <section id="testimonials" class="section testimonials">
     <div class="container">
-      <header class="section-head">
-        <span class="kicker">Loved by the locals</span>
-        <h2>What our regulars are saying.</h2>
-      </header>
+      <div class="section-head">
+        <div class="section-label">What People Say</div>
+        <h2>Words from<br/>our regulars.</h2>
+      </div>
 
-      <div class="t-grid">
-        <article class="t-card">
-          <div class="t-stars" aria-label="5 out of 5 stars">★★★★★</div>
-          <blockquote>
-            "The Honey Haze IPA is genuinely the best beer I've had in years. The taproom is warm, the staff are warmer, and the dog gets a biscuit. Perfect."
-          </blockquote>
-          <div class="t-by">
-            <div class="t-avatar" style="--c:#ffb300">SM</div>
-            <div>
-              <strong>Sarah M.</strong>
-              <small>Regular since '21</small>
-            </div>
-          </div>
+      <div class="t-layout">
+        <article class="t-card tc-side">
+          <div class="t-stars">★★★★★</div>
+          <blockquote>"The Honey Haze is genuinely the best beer I've had in years. The taproom is warm, the staff are warmer, and the dog gets a biscuit. We come every week."</blockquote>
+          <footer class="t-by">
+            <div class="t-avatar" style="--av:#d48c00">SM</div>
+            <div><strong>Sarah M.</strong><span>Regular since 2021</span></div>
+          </footer>
         </article>
 
-        <article class="t-card t-card-feature">
-          <div class="t-stars" aria-label="5 out of 5 stars">★★★★★</div>
-          <blockquote>
-            "I've toured breweries across Belgium and Bavaria — Mr Bee's stout sits comfortably with the best of them. The honeycomb finish is something genuinely special."
-          </blockquote>
-          <div class="t-by">
-            <div class="t-avatar" style="--c:#5d3a1a">DK</div>
+        <article class="t-card tc-featured">
+          <div class="t-quote-mark">"</div>
+          <div class="t-stars gold">★★★★★</div>
+          <blockquote>I've toured breweries across Belgium and Bavaria. Mr Bee's Honeycomb Stout sits comfortably with the finest of them. The interplay between the honey sweetness and roasted malt is genuinely masterful.</blockquote>
+          <footer class="t-by">
+            <div class="t-avatar" style="--av:#1c110a">DK</div>
             <div>
               <strong>Daniel K.</strong>
-              <small>Beer writer, Hops &amp; Honey</small>
+              <span>Beer writer · Hops &amp; Honey Magazine</span>
             </div>
-          </div>
+          </footer>
         </article>
 
-        <article class="t-card">
-          <div class="t-stars" aria-label="5 out of 5 stars">★★★★★</div>
-          <blockquote>
-            "Booked the brewery tour for my dad's 60th. Mr Bee himself walked us through the whole process. We left with full bellies and four growlers. Cracking afternoon."
-          </blockquote>
-          <div class="t-by">
-            <div class="t-avatar" style="--c:#ff8a00">JR</div>
-            <div>
-              <strong>Jess R.</strong>
-              <small>Tour guest, Mar '25</small>
-            </div>
-          </div>
+        <article class="t-card tc-side">
+          <div class="t-stars">★★★★★</div>
+          <blockquote>"Booked the brewery tour for my dad's 60th. Mr Bee himself walked us through every stage. We left carrying four growlers and a jar of honey. Utterly brilliant afternoon."</blockquote>
+          <footer class="t-by">
+            <div class="t-avatar" style="--av:#b56800">JR</div>
+            <div><strong>Jess R.</strong><span>Tour guest, March 2025</span></div>
+          </footer>
         </article>
+      </div>
+
+      <div class="t-aggregate">
+        <span class="agg-score">4.9</span>
+        <span class="agg-stars">★★★★★</span>
+        <span class="agg-label">from 840+ reviews across Google &amp; Untappd</span>
       </div>
     </div>
   </section>
 
   <!-- CTA / VISIT -->
   <section id="visit" class="section cta">
-    <div class="cta-card container">
-      <div class="cta-copy">
-        <span class="kicker dark">Visit the Hive</span>
-        <h2>Pull up a stool. We saved you one.</h2>
-        <p>Drop by the taproom, book a guided brewery tour, or grab a four-pack to take home. We're open Wednesday through Sunday.</p>
-        <div class="cta-actions">
-          <a class="btn btn-primary btn-lg" href="#">Book a Tour</a>
-          <a class="btn btn-dark btn-lg" href="#">Get Directions</a>
+    <div class="container">
+      <div class="cta-grid">
+        <div class="cta-info">
+          <div class="section-label">Find Us</div>
+          <h2>Pull up a stool.<br/>We've kept one warm.</h2>
+          <p>Drop by the taproom any Wednesday through Sunday, book onto a Saturday tour, or pick up a mixed case to take home.</p>
+          <div class="cta-btns">
+            <a class="btn btn-primary" href="#">Book a Brewery Tour</a>
+            <a class="btn btn-outline-dark" href="#">Get Directions</a>
+          </div>
+          <div class="visit-details">
+            <div class="vd-row">
+              <span class="vd-label">Opening hours</span>
+              <span>Wednesday – Sunday, 12pm to late</span>
+            </div>
+            <div class="vd-row">
+              <span class="vd-label">Address</span>
+              <span>14 Honeyfield Lane, Meadowbrook</span>
+            </div>
+            <div class="vd-row">
+              <span class="vd-label">Brewery tours</span>
+              <span>Saturdays at 1pm &amp; 3pm · £18 per person</span>
+            </div>
+            <div class="vd-row">
+              <span class="vd-label">Phone</span>
+              <span>+44 (0)1234 567 890</span>
+            </div>
+          </div>
         </div>
-        <ul class="cta-info">
-          <li><strong>Hours</strong> Wed–Sun · 12pm – late</li>
-          <li><strong>Address</strong> 14 Honeyfield Lane, Meadowbrook</li>
-          <li><strong>Tours</strong> Saturdays 1pm &amp; 3pm</li>
-        </ul>
+
+        <div class="cta-form-wrap">
+          <form class="cta-form" onsubmit="handleSubscribe(event)">
+            <div class="form-header">
+              <h3>Join the Swarm</h3>
+              <p>New releases, taproom events, and the occasional jar of honey — delivered to your inbox.</p>
+            </div>
+            <div class="form-fields">
+              <label class="form-field">
+                <span>Full name</span>
+                <input type="text" placeholder="Your name" required autocomplete="name" />
+              </label>
+              <label class="form-field">
+                <span>Email address</span>
+                <input type="email" placeholder="you@example.com" required autocomplete="email" />
+              </label>
+            </div>
+            <button class="btn btn-primary btn-full" type="submit" id="subBtn">
+              Subscribe to updates
+            </button>
+            <p class="form-note">No spam. Unsubscribe at any time.</p>
+          </form>
+        </div>
       </div>
-      <form class="cta-form" onsubmit="event.preventDefault(); this.querySelector('button').textContent='✓ Subscribed!';">
-        <h3>Join the Swarm</h3>
-        <p>New brews, taproom events and the occasional jar of honey, straight to your inbox.</p>
-        <label>
-          <span>Your name</span>
-          <input type="text" placeholder="Worker bee" required />
-        </label>
-        <label>
-          <span>Email</span>
-          <input type="email" placeholder="you@hive.co" required />
-        </label>
-        <button class="btn btn-primary btn-lg" type="submit">Subscribe</button>
-        <small>No spam, just buzz. Unsubscribe anytime.</small>
-      </form>
     </div>
   </section>
 
   <!-- FOOTER -->
   <footer class="footer">
-    <div class="container footer-grid">
-      <div>
-        <a class="brand brand-footer" href="#top">
-          <span class="brand-mark"><svg viewBox="0 0 80 60"><use href="#bee-icon"/></svg></span>
-          <span class="brand-text">
-            <span class="brand-mr">Mr Bee's</span>
-            <span class="brand-sub">Brewery Co.</span>
-          </span>
-        </a>
-        <p class="footer-tag">Brewed by hand. Pollinated by joy.</p>
+    <div class="container">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <a class="brand footer-brand-link" href="#top">
+            <span class="brand-hex" aria-hidden="true">
+              <svg viewBox="0 0 100 115" fill="none">
+                <polygon points="50,2 96,27 96,87 50,112 4,87 4,27" fill="#e8a000" stroke="#1c110a" stroke-width="2"/>
+                <text x="50" y="70" text-anchor="middle" font-size="44" dominant-baseline="middle">🐝</text>
+              </svg>
+            </span>
+            <span class="brand-text">
+              <span class="brand-name">Mr Bee's</span>
+              <span class="brand-tag">Brewery Co.</span>
+            </span>
+          </a>
+          <p class="footer-strapline">Brewed by hand.<br/>Pollinated by passion.</p>
+          <div class="footer-socials">
+            <a href="#" aria-label="Instagram">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" width="20"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+            </a>
+            <a href="#" aria-label="Facebook">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" width="20"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg>
+            </a>
+            <a href="#" aria-label="Untappd">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" width="20"><path d="M8 3l8 18M8 3l8 18"/><circle cx="12" cy="10" r="3"/></svg>
+            </a>
+          </div>
+        </div>
+
+        <nav class="footer-nav" aria-label="Footer navigation">
+          <div class="fn-col">
+            <h4>Brewery</h4>
+            <ul>
+              <li><a href="#brews">Our Brews</a></li>
+              <li><a href="#story">Our Story</a></li>
+              <li><a href="#gallery">Taproom</a></li>
+              <li><a href="#visit">Brewery Tours</a></li>
+            </ul>
+          </div>
+          <div class="fn-col">
+            <h4>Visit</h4>
+            <ul>
+              <li>14 Honeyfield Lane</li>
+              <li>Meadowbrook</li>
+              <li>Wed–Sun, 12pm–late</li>
+              <li>+44 (0)1234 567 890</li>
+            </ul>
+          </div>
+          <div class="fn-col">
+            <h4>Company</h4>
+            <ul>
+              <li><a href="#">Wholesale</a></li>
+              <li><a href="#">Private Events</a></li>
+              <li><a href="#">Press &amp; Media</a></li>
+              <li><a href="#">Careers</a></li>
+            </ul>
+          </div>
+        </nav>
       </div>
-      <div>
-        <h4>Visit</h4>
-        <ul>
-          <li>14 Honeyfield Lane</li>
-          <li>Meadowbrook</li>
-          <li>+44 (0)1234 567 890</li>
-        </ul>
+
+      <div class="footer-bottom">
+        <small>© 2014–2026 Mr Bee's Brewery Co. Ltd. All rights reserved. Please drink responsibly.</small>
+        <small>Registered in England &amp; Wales · Company No. 08741952</small>
       </div>
-      <div>
-        <h4>Brewery</h4>
-        <ul>
-          <li><a href="#brews">Our Brews</a></li>
-          <li><a href="#story">Our Story</a></li>
-          <li><a href="#gallery">Taproom</a></li>
-          <li><a href="#visit">Tours</a></li>
-        </ul>
-      </div>
-      <div>
-        <h4>Follow</h4>
-        <ul class="socials">
-          <li><a href="#" aria-label="Instagram">Instagram</a></li>
-          <li><a href="#" aria-label="Facebook">Facebook</a></li>
-          <li><a href="#" aria-label="Untappd">Untappd</a></li>
-        </ul>
-      </div>
-    </div>
-    <div class="footer-bar container">
-      <small>© 2014–2026 Mr Bee's Brewery Co. Please drink responsibly.</small>
-      <small>Crafted with 🍯 in Meadowbrook</small>
     </div>
   </footer>
 

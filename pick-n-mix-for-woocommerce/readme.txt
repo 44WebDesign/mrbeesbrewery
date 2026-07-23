@@ -26,7 +26,7 @@ Perfect for things like:
 = Features =
 
 * A dedicated **Pick n Mix box** product type.
-* Set a **fixed box price** charged regardless of contents.
+* Set a **price for each box size** – e.g. 2 treats for £6, 3 for £8, 4 for £10 – or a single price if min = max.
 * Require an exact number of items (min = max) or a range (e.g. between 2 and 4).
 * Pick the selectable products individually and/or by category.
 * Clean product-page picker with quantity steppers, a live counter and progress bar.
@@ -47,15 +47,15 @@ Perfect for things like:
 2. Give the box a name (e.g. "Build Your Own Treat Box"), description and image.
 3. In the **Product data** dropdown choose **Pick n Mix box**.
 4. Open the **Pick n Mix** tab and set:
-   * **Fixed box price** – the single price for the whole box.
    * **Minimum / Maximum items** – set both the same for an exact count (e.g. 3 and 3 = "pick any 3").
+   * **Box price per size** – a price row appears for every size between the minimum and maximum; enter the price for 2 items, 3 items, and so on.
    * **Selectable products** and/or **Selectable categories** – what the customer can put in the box.
 5. Publish. The box now shows a picker on its product page.
 
 == Frequently Asked Questions ==
 
-= Does it change the price based on what's picked? =
-No. A pick n mix box is always the fixed price you set, whatever the customer chooses. (Per-item pricing is intentionally out of scope for this plugin.)
+= How is the box priced? =
+By the number of items in it, not by which items are chosen. You set a price for each box size (2 items, 3 items, 4 items…), and the customer pays the price for the size they build. Set the minimum and maximum to the same number if you only want one fixed price.
 
 = Can customers buy more than one box? =
 Yes. Each configured box is added as one cart line. Adding another box with the same contents increases the quantity; a different combination becomes a separate line.

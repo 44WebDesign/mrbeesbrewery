@@ -169,7 +169,13 @@ class PNM_WC_Cart {
 				continue;
 			}
 
-			$product->set_price( $product->get_regular_price() );
+			// Charge the price that matches the number of items in this box.
+			$count = PNM_WC_Helpers::count_items( $cart_item['pnm_selection'] );
+			$price = $product->get_price_for_count( $count );
+
+			if ( '' !== $price ) {
+				$product->set_price( $price );
+			}
 		}
 	}
 

@@ -83,39 +83,19 @@ class PNM_WC_Admin {
 
 		$min          = 3;
 		$max          = 3;
-		$price        = '';
+		$prices       = array();
 		$product_ids  = array();
 		$category_ids = array();
 
 		if ( $product instanceof WC_Product_Pick_N_Mix ) {
 			$min          = $product->get_pnm_min( 'edit' );
 			$max          = $product->get_pnm_max( 'edit' );
-			$price        = $product->get_regular_price( 'edit' );
+			$prices       = $product->get_pnm_prices( 'edit' );
 			$product_ids  = $product->get_pnm_products( 'edit' );
 			$category_ids = $product->get_pnm_categories( 'edit' );
 		}
 
 		echo '<div id="pnm_wc_product_data" class="panel woocommerce_options_panel hidden">';
-
-		echo '<div class="options_group">';
-
-		// Fixed box price.
-		woocommerce_wp_text_input(
-			array(
-				'id'          => '_pnm_price',
-				'value'       => $price,
-				'label'       => sprintf(
-					/* translators: %s: currency symbol */
-					__( 'Fixed box price (%s)', 'pick-n-mix-for-woocommerce' ),
-					get_woocommerce_currency_symbol()
-				),
-				'desc_tip'    => true,
-				'description' => __( 'The single price charged for the whole box, whatever the customer picks.', 'pick-n-mix-for-woocommerce' ),
-				'data_type'   => 'price',
-			)
-		);
-
-		echo '</div>';
 
 		echo '<div class="options_group">';
 
@@ -151,6 +131,56 @@ class PNM_WC_Admin {
 			)
 		);
 
+		echo '</div>';
+
+		// Per-quantity price table. Rows are rebuilt by JS as the min/max change,
+		// but we render the current range server-side so it works without JS too.
+		echo '<div class="options_group pnm-wc-prices-group">';
+		?>
+		<p class="form-field">
+			<label><?php esc_html_e( 'Box price per size', 'pick-n-mix-for-woocommerce' ); ?></label>
+			<span class="description" style="display:inline-block;max-width:60%;vertical-align:top;">
+				<?php
+				printf(
+					/* translators: %s: currency symbol */
+					esc_html__( 'Set the price (%s) for each possible number of items in the box. One row appears for every size between your minimum and maximum.', 'pick-n-mix-for-woocommerce' ),
+					esc_html( get_woocommerce_currency_symbol() )
+				);
+				?>
+			</span>
+		</p>
+		<table class="widefat pnm-wc-prices-table" style="width:60%;margin:0 0 12px 12px;" data-prices="<?php echo esc_attr( wp_json_encode( (object) $prices ) ); ?>">
+			<thead>
+				<tr>
+					<th style="width:40%;"><?php esc_html_e( 'Items in box', 'pick-n-mix-for-woocommerce' ); ?></th>
+					<th><?php
+						printf(
+							/* translators: %s: currency symbol */
+							esc_html__( 'Box price (%s)', 'pick-n-mix-for-woocommerce' ),
+							esc_html( get_woocommerce_currency_symbol() )
+						);
+					?></th>
+				</tr>
+			</thead>
+			<tbody>
+				<?php
+				$row_min = max( 1, (int) $min );
+				$row_max = max( $row_min, (int) $max );
+				for ( $count = $row_min; $count <= $row_max; $count++ ) {
+					$value = isset( $prices[ $count ] ) ? $prices[ $count ] : '';
+					echo '<tr>';
+					echo '<td>' . sprintf(
+						/* translators: %d: number of items */
+						esc_html( _n( '%d item', '%d items', $count, 'pick-n-mix-for-woocommerce' ) ),
+						(int) $count
+					) . '</td>';
+					echo '<td><input type="text" class="wc_input_price pnm-wc-price-input" name="_pnm_prices[' . esc_attr( $count ) . ']" value="' . esc_attr( $value ) . '" placeholder="0.00" /></td>';
+					echo '</tr>';
+				}
+				?>
+			</tbody>
+		</table>
+		<?php
 		echo '</div>';
 
 		echo '<div class="options_group">';
@@ -226,21 +256,34 @@ class PNM_WC_Admin {
 			$max = $min;
 		}
 
-		$price = isset( $_POST['_pnm_price'] ) ? wc_format_decimal( wp_unslash( $_POST['_pnm_price'] ) ) : '';
+		// Collect a price for every valid box size within the min/max range.
+		$prices_raw = isset( $_POST['_pnm_prices'] ) ? (array) wp_unslash( $_POST['_pnm_prices'] ) : array();
+		$prices     = array();
+		for ( $count = $min; $count <= $max; $count++ ) {
+			if ( isset( $prices_raw[ $count ] ) && '' !== $prices_raw[ $count ] ) {
+				$prices[ $count ] = wc_format_decimal( $prices_raw[ $count ] );
+			}
+		}
 
 		$product_ids  = isset( $_POST['_pnm_products'] ) ? array_map( 'absint', (array) wp_unslash( $_POST['_pnm_products'] ) ) : array();
 		$category_ids = isset( $_POST['_pnm_categories'] ) ? array_map( 'absint', (array) wp_unslash( $_POST['_pnm_categories'] ) ) : array();
 
 		$product->set_pnm_min( $min );
 		$product->set_pnm_max( $max );
+		$product->set_pnm_prices( $prices );
 		$product->set_pnm_products( $product_ids );
 		$product->set_pnm_categories( $category_ids );
 
-		// The fixed box price is stored as the product's regular price so that
-		// WooCommerce shows and charges it natively everywhere.
-		$product->set_regular_price( $price );
+		// Store the cheapest box size's price as the product's regular price so
+		// WooCommerce always has a native price to sort by / mark it purchasable.
+		// The actual charge is set per box size in the cart.
+		$base_price = '';
+		if ( ! empty( $prices ) ) {
+			$base_price = isset( $prices[ $min ] ) ? $prices[ $min ] : reset( $prices );
+		}
+		$product->set_regular_price( $base_price );
 		$product->set_sale_price( '' );
-		$product->set_price( $price );
+		$product->set_price( $base_price );
 
 		$product->save();
 	}

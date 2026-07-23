@@ -24,6 +24,7 @@ class WC_Product_Pick_N_Mix extends WC_Product {
 	protected $extra_data = array(
 		'pnm_min'        => 3,
 		'pnm_max'        => 3,
+		'pnm_prices'     => array(),
 		'pnm_products'   => array(),
 		'pnm_categories' => array(),
 	);
@@ -185,6 +186,103 @@ class WC_Product_Pick_N_Mix extends WC_Product {
 	 */
 	public function set_pnm_categories( $value ) {
 		$this->set_prop( 'pnm_categories', array_values( array_unique( array_map( 'absint', (array) $value ) ) ) );
+	}
+
+	/**
+	 * Get the per-quantity price table, keyed by item count.
+	 *
+	 * @param string $context View or edit context.
+	 * @return array<int,string>
+	 */
+	public function get_pnm_prices( $context = 'view' ) {
+		$prices = (array) $this->get_prop( 'pnm_prices', $context );
+		$clean  = array();
+		foreach ( $prices as $count => $price ) {
+			$clean[ (int) $count ] = $price;
+		}
+		ksort( $clean );
+		return $clean;
+	}
+
+	/**
+	 * Set the per-quantity price table.
+	 *
+	 * @param array<int|string,mixed> $value Count => price.
+	 */
+	public function set_pnm_prices( $value ) {
+		$clean = array();
+		foreach ( (array) $value as $count => $price ) {
+			$count = absint( $count );
+			if ( $count < 1 || '' === $price || null === $price ) {
+				continue;
+			}
+			$clean[ $count ] = wc_format_decimal( $price );
+		}
+		ksort( $clean );
+		$this->set_prop( 'pnm_prices', $clean );
+	}
+
+	/**
+	 * Look up the box price for a given number of items. Falls back to the
+	 * nearest defined lower count, then the cheapest defined price, then the
+	 * product's regular price, so a box can never end up unpriced.
+	 *
+	 * @param int $count Number of items in the box.
+	 * @return string Price as a decimal string, or '' if nothing is set.
+	 */
+	public function get_price_for_count( $count ) {
+		$count  = absint( $count );
+		$prices = $this->get_pnm_prices();
+
+		if ( isset( $prices[ $count ] ) ) {
+			return $prices[ $count ];
+		}
+
+		// Nearest defined count at or below the requested count.
+		$lower = null;
+		foreach ( $prices as $defined => $price ) {
+			if ( $defined <= $count && ( null === $lower || $defined > $lower ) ) {
+				$lower = $defined;
+			}
+		}
+		if ( null !== $lower ) {
+			return $prices[ $lower ];
+		}
+
+		if ( ! empty( $prices ) ) {
+			$counts = array_keys( $prices );
+			return $prices[ min( $counts ) ];
+		}
+
+		return $this->get_regular_price();
+	}
+
+	/**
+	 * Show a price range (cheapest box to dearest box) on shop and product pages.
+	 *
+	 * @param string $deprecated Unused.
+	 * @return string
+	 */
+	public function get_price_html( $deprecated = '' ) {
+		$prices = array_filter(
+			array_map( 'floatval', $this->get_pnm_prices() ),
+			function ( $price ) {
+				return $price > 0;
+			}
+		);
+
+		if ( empty( $prices ) ) {
+			return apply_filters( 'woocommerce_get_price_html', '', $this );
+		}
+
+		$min = min( $prices );
+		$max = max( $prices );
+
+		$html = ( $min === $max )
+			? wc_price( $min )
+			: wc_format_price_range( $min, $max );
+
+		return apply_filters( 'woocommerce_get_price_html', $html, $this );
 	}
 
 	/**

@@ -71,18 +71,32 @@ class PNM_WC_Frontend {
 			true
 		);
 
+		$min = $product->get_pnm_min();
+		$max = $product->get_pnm_max();
+
+		// Pre-render the box price for every valid size so the bag can update live.
+		$prices_html = array();
+		for ( $count = $min; $count <= $max; $count++ ) {
+			$price = $product->get_price_for_count( $count );
+			if ( '' !== $price ) {
+				$prices_html[ $count ] = wc_price( $price );
+			}
+		}
+
 		wp_localize_script(
 			'pnm-wc',
 			'pnmWc',
 			array(
-				'min'           => $product->get_pnm_min(),
-				'max'           => $product->get_pnm_max(),
+				'min'           => $min,
+				'max'           => $max,
+				'pricesHtml'    => (object) $prices_html,
 				'i18nRemaining' => __( 'Add %d more', 'pick-n-mix-for-woocommerce' ),
 				'i18nFull'      => __( 'Bag is full!', 'pick-n-mix-for-woocommerce' ),
 				'i18nReady'     => __( 'Your bag is ready', 'pick-n-mix-for-woocommerce' ),
 				'i18nOver'      => __( 'Take out %d', 'pick-n-mix-for-woocommerce' ),
 				'i18nEmpty'     => __( 'Your bag is empty — tap the treats to fill it up!', 'pick-n-mix-for-woocommerce' ),
 				'i18nRemove'    => __( 'Remove', 'pick-n-mix-for-woocommerce' ),
+				'i18nFrom'      => __( 'From', 'pick-n-mix-for-woocommerce' ),
 			)
 		);
 	}
@@ -200,7 +214,7 @@ class PNM_WC_Frontend {
 							<p class="pnm-wc-message" aria-live="polite"></p>
 							<div class="pnm-wc-price">
 								<span class="pnm-wc-price-label"><?php esc_html_e( 'Bag price', 'pick-n-mix-for-woocommerce' ); ?></span>
-								<span class="pnm-wc-price-value"><?php echo wp_kses_post( wc_price( $product->get_price() ) ); ?></span>
+								<span class="pnm-wc-price-value"><?php echo esc_html__( 'From', 'pick-n-mix-for-woocommerce' ) . ' ' . wp_kses_post( wc_price( $product->get_price_for_count( $min ) ) ); ?></span>
 							</div>
 
 							<input type="hidden" name="add-to-cart" value="<?php echo esc_attr( $product->get_id() ); ?>" />

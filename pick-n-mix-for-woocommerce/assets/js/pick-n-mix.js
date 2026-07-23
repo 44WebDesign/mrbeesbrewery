@@ -22,6 +22,7 @@
 		var $bagItems = $form.find( '.pnm-wc-bag-items' );
 		var $bagEmpty = $form.find( '.pnm-wc-bag-empty' );
 		var $bag      = $form.find( '.pnm-wc-bag' );
+		var $priceVal = $form.find( '.pnm-wc-price-value' );
 
 		function qtyInput( id ) {
 			return $form.find( '.pnm-wc-qty-input[name="pnm_qty[' + id + ']"]' );
@@ -96,6 +97,15 @@
 
 			var ready = count >= min && count <= max;
 			$form.toggleClass( 'pnm-wc-ready', ready );
+
+			// Live bag price: show the price for the current size once the bag is
+			// valid, otherwise show the starting ("from") price for the minimum.
+			var prices = pnmWc.pricesHtml || {};
+			if ( ready && prices[ count ] ) {
+				$priceVal.html( prices[ count ] );
+			} else if ( prices[ min ] ) {
+				$priceVal.html( pnmWc.i18nFrom + ' ' + prices[ min ] );
+			}
 
 			if ( count > max ) {
 				$message.text( sprintf( pnmWc.i18nOver, count - max ) );

@@ -1,54 +1,242 @@
 /**
- * Pick n Mix for WooCommerce - frontend styles.
- * Intentionally lightweight and theme-agnostic; colours inherit where possible.
+ * Pick n Mix for WooCommerce - sweet-stall front-end styles.
+ * Self-contained and theme-agnostic. Override the --pnm-* variables in your
+ * theme to re-colour the stall.
  */
 
-.pnm-wc-form {
-	--pnm-accent: #4f7a3a;
-	--pnm-border: #e3e3e3;
-	--pnm-muted: #6b6b6b;
+.pnm-wc-stall {
+	--pnm-accent: #e05a8a;      /* candy pink   */
+	--pnm-accent-2: #ffd23f;    /* toffee yellow*/
+	--pnm-jar: #ffffff;
+	--pnm-ink: #3a2b2f;
+	--pnm-muted: #8a7c80;
+	--pnm-border: #f0d9e2;
+	--pnm-bag: #f3e4c7;         /* paper bag    */
+	--pnm-bag-dark: #e4d0aa;
+	--pnm-radius: 16px;
+
 	margin-top: 1.5em;
+	color: var(--pnm-ink);
 }
 
-.pnm-wc-header {
-	margin-bottom: 1.25em;
+.pnm-wc-stall-layout {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 1.5em;
+}
+
+@media (min-width: 900px) {
+	.pnm-wc-stall-layout {
+		grid-template-columns: 1fr 300px;
+		align-items: start;
+	}
+}
+
+/* ---------- Stall / signboard ---------- */
+
+.pnm-wc-stall-signboard {
+	display: flex;
+	align-items: center;
+	gap: 0.6em;
+	background: repeating-linear-gradient(
+		45deg,
+		var(--pnm-accent),
+		var(--pnm-accent) 18px,
+		#f4779f 18px,
+		#f4779f 36px
+	);
+	color: #fff;
+	padding: 0.7em 1em;
+	border-radius: var(--pnm-radius);
+	box-shadow: 0 4px 0 rgba( 0, 0, 0, 0.08 );
+	margin-bottom: 1.1em;
+}
+
+.pnm-wc-stall-sign-icon {
+	font-size: 1.6em;
+	line-height: 1;
 }
 
 .pnm-wc-rule {
-	font-weight: 600;
+	margin: 0;
+	font-weight: 700;
 	font-size: 1.05em;
-	margin: 0 0 0.4em;
+	text-shadow: 0 1px 1px rgba( 0, 0, 0, 0.18 );
 }
 
-.pnm-wc-status {
+/* ---------- Shelf of jars ---------- */
+
+.pnm-wc-shelf {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+	gap: 0.9em;
+}
+
+.pnm-wc-jar {
+	margin: 0;
+}
+
+.pnm-wc-jar-btn {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 0.4em;
+	width: 100%;
+	height: 100%;
+	cursor: pointer;
+	background: var(--pnm-jar);
+	border: 2px solid var(--pnm-border);
+	border-radius: var(--pnm-radius);
+	padding: 0.9em 0.6em 0.7em;
+	text-align: center;
+	transition: transform 0.12s ease, box-shadow 0.12s ease, border-color 0.12s ease;
+	color: inherit;
+	font: inherit;
+}
+
+.pnm-wc-jar-btn:hover:not(:disabled) {
+	transform: translateY(-3px);
+	border-color: var(--pnm-accent);
+	box-shadow: 0 8px 18px rgba( 224, 90, 138, 0.18 );
+}
+
+.pnm-wc-jar-btn:active:not(:disabled) {
+	transform: translateY(-1px) scale(0.98);
+}
+
+.pnm-wc-jar-btn:disabled {
+	cursor: not-allowed;
+}
+
+.pnm-wc-jar.is-picked .pnm-wc-jar-btn {
+	border-color: var(--pnm-accent);
+	background: #fff5f8;
+}
+
+.pnm-wc-jar--oos .pnm-wc-jar-btn {
+	opacity: 0.5;
+	filter: grayscale(0.7);
+}
+
+.pnm-wc-jar-image img {
+	width: 84px;
+	height: 84px;
+	object-fit: cover;
+	border-radius: 50%;
+	background: #faf3f6;
+	box-shadow: inset 0 0 0 4px rgba( 255, 255, 255, 0.6 ), 0 2px 6px rgba( 0, 0, 0, 0.08 );
+	display: block;
+}
+
+.pnm-wc-jar-name {
+	font-weight: 600;
+	font-size: 0.9em;
+	line-height: 1.2;
+}
+
+.pnm-wc-jar-add {
+	font-size: 0.72em;
+	font-weight: 700;
+	letter-spacing: 0.03em;
+	text-transform: uppercase;
+	color: var(--pnm-accent);
+}
+
+.pnm-wc-jar-stock {
+	font-size: 0.72em;
+	font-weight: 700;
+	text-transform: uppercase;
+	color: #b00;
+}
+
+/* Count badge on a picked jar */
+.pnm-wc-jar-badge {
+	position: absolute;
+	top: -8px;
+	right: -8px;
+	min-width: 24px;
+	height: 24px;
+	padding: 0 6px;
+	border-radius: 999px;
+	background: var(--pnm-accent-2);
+	color: var(--pnm-ink);
+	font-size: 0.8em;
+	font-weight: 800;
+	line-height: 24px;
+	box-shadow: 0 2px 5px rgba( 0, 0, 0, 0.2 );
+	transform: scale(0);
+	transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.pnm-wc-jar-badge.is-active {
+	transform: scale(1);
+}
+
+/* ---------- The bag ---------- */
+
+.pnm-wc-bag-panel {
+	position: sticky;
+	top: 1.5em;
+}
+
+.pnm-wc-bag {
+	background: var(--pnm-bag);
+	background-image: linear-gradient( 180deg, rgba( 255, 255, 255, 0.35 ), rgba( 255, 255, 255, 0 ) 40% );
+	border-radius: 6px 6px var(--pnm-radius) var(--pnm-radius);
+	box-shadow: 0 10px 24px rgba( 0, 0, 0, 0.12 );
+	overflow: hidden;
+	transition: transform 0.2s ease;
+}
+
+/* Folded paper-bag top */
+.pnm-wc-bag::before {
+	content: "";
+	display: block;
+	height: 14px;
+	background: repeating-linear-gradient(
+		90deg,
+		var(--pnm-bag-dark),
+		var(--pnm-bag-dark) 14px,
+		#d9c39a 14px,
+		#d9c39a 28px
+	);
+	box-shadow: inset 0 -3px 4px rgba( 0, 0, 0, 0.08 );
+}
+
+.pnm-wc-bag--bump {
+	transform: translateY(-4px) scale(1.01);
+}
+
+.pnm-wc-bag-top {
 	display: flex;
 	align-items: center;
-	gap: 0.75em;
-	margin-bottom: 0.5em;
-	font-size: 0.95em;
+	justify-content: space-between;
+	padding: 0.8em 1em 0.4em;
+}
+
+.pnm-wc-bag-title {
+	font-weight: 800;
+	font-size: 1.05em;
 }
 
 .pnm-wc-count {
-	font-weight: 700;
+	font-weight: 800;
 	background: var(--pnm-accent);
 	color: #fff;
-	padding: 0.15em 0.6em;
+	padding: 0.15em 0.7em;
 	border-radius: 999px;
 	white-space: nowrap;
-}
-
-.pnm-wc-message {
-	color: var(--pnm-muted);
-}
-
-.pnm-wc-ready .pnm-wc-message {
-	color: var(--pnm-accent);
-	font-weight: 600;
+	font-size: 0.9em;
 }
 
 .pnm-wc-progress {
 	height: 8px;
-	background: var(--pnm-border);
+	margin: 0 1em;
+	background: rgba( 0, 0, 0, 0.08 );
 	border-radius: 999px;
 	overflow: hidden;
 }
@@ -57,134 +245,161 @@
 	display: block;
 	height: 100%;
 	width: 0;
-	background: var(--pnm-accent);
-	transition: width 0.25s ease;
+	background: linear-gradient( 90deg, var(--pnm-accent-2), var(--pnm-accent) );
+	transition: width 0.3s ease;
 }
 
-.pnm-wc-products {
+.pnm-wc-bag-body {
+	padding: 0.75em 1em;
+	min-height: 70px;
+}
+
+.pnm-wc-bag-empty {
+	margin: 0;
+	color: var(--pnm-muted);
+	font-size: 0.9em;
+	text-align: center;
+	padding: 0.6em 0;
+}
+
+.pnm-wc-bag-items {
 	list-style: none;
-	margin: 0 0 1.5em;
+	margin: 0;
 	padding: 0;
-	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-	gap: 0.9em;
-}
-
-.pnm-wc-product {
-	display: flex;
-	align-items: center;
-	gap: 0.75em;
-	border: 1px solid var(--pnm-border);
-	border-radius: 10px;
-	padding: 0.7em;
-	background: #fff;
-}
-
-.pnm-wc-product--oos {
-	opacity: 0.55;
-}
-
-.pnm-wc-product-image img {
-	width: 56px;
-	height: 56px;
-	object-fit: cover;
-	border-radius: 8px;
-	display: block;
-}
-
-.pnm-wc-product-info {
-	flex: 1 1 auto;
 	display: flex;
 	flex-direction: column;
-	min-width: 0;
+	gap: 0.4em;
 }
 
-.pnm-wc-product-name {
-	font-weight: 600;
-	line-height: 1.25;
-}
-
-.pnm-wc-product-desc {
-	font-size: 0.8em;
-	color: var(--pnm-muted);
-	margin-top: 0.15em;
-}
-
-.pnm-wc-product-stock {
-	font-size: 0.8em;
-	color: #b00;
-	margin-top: 0.15em;
-}
-
-.pnm-wc-product-qty {
+.pnm-wc-bag-item {
 	display: flex;
 	align-items: center;
-	gap: 0.25em;
+	gap: 0.5em;
+	background: #fff;
+	border-radius: 999px;
+	padding: 0.25em 0.5em;
+	box-shadow: 0 1px 3px rgba( 0, 0, 0, 0.08 );
+	animation: pnm-pop 0.22s ease;
+}
+
+@keyframes pnm-pop {
+	from { transform: scale(0.85); opacity: 0; }
+	to   { transform: scale(1); opacity: 1; }
+}
+
+.pnm-wc-bag-item-thumb {
+	width: 30px;
+	height: 30px;
+	border-radius: 50%;
+	object-fit: cover;
 	flex: 0 0 auto;
 }
 
-.pnm-wc-product-qty button {
-	width: 32px;
-	height: 32px;
-	border: 1px solid var(--pnm-border);
-	background: #f7f7f7;
-	border-radius: 8px;
-	font-size: 1.2em;
+.pnm-wc-bag-item-name {
+	flex: 1 1 auto;
+	font-size: 0.88em;
+	font-weight: 600;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.pnm-wc-bag-item-qty {
+	font-size: 0.82em;
+	font-weight: 800;
+	color: var(--pnm-accent);
+}
+
+.pnm-wc-bag-remove {
+	flex: 0 0 auto;
+	width: 22px;
+	height: 22px;
+	border-radius: 50%;
+	border: none;
+	background: #f2e6ea;
+	color: var(--pnm-ink);
+	font-size: 1em;
 	line-height: 1;
 	cursor: pointer;
 	padding: 0;
-	color: inherit;
 }
 
-.pnm-wc-product-qty button:hover:not(:disabled) {
-	border-color: var(--pnm-accent);
-	color: var(--pnm-accent);
+.pnm-wc-bag-remove:hover {
+	background: var(--pnm-accent);
+	color: #fff;
 }
 
-.pnm-wc-product-qty button:disabled {
-	opacity: 0.4;
-	cursor: not-allowed;
+.pnm-wc-bag-foot {
+	padding: 0.5em 1em 1em;
+	border-top: 1px dashed var(--pnm-bag-dark);
 }
 
-.pnm-wc-qty-input {
-	width: 42px;
-	text-align: center;
-	border: 1px solid var(--pnm-border);
-	border-radius: 8px;
-	height: 32px;
-	padding: 0;
-	-moz-appearance: textfield;
+.pnm-wc-message {
+	margin: 0.4em 0 0.6em;
+	font-weight: 600;
+	font-size: 0.9em;
+	min-height: 1.2em;
+	color: var(--pnm-muted);
 }
 
-.pnm-wc-qty-input::-webkit-outer-spin-button,
-.pnm-wc-qty-input::-webkit-inner-spin-button {
-	-webkit-appearance: none;
-	margin: 0;
-}
-
-.pnm-wc-footer {
-	display: flex;
-	align-items: center;
-	flex-wrap: wrap;
-	gap: 1em;
+.pnm-wc-ready .pnm-wc-message {
+	color: #2e7d32;
 }
 
 .pnm-wc-price {
-	font-size: 1.1em;
+	display: flex;
+	align-items: baseline;
+	justify-content: space-between;
+	margin-bottom: 0.6em;
+}
+
+.pnm-wc-price-label {
+	font-weight: 600;
 }
 
 .pnm-wc-price-value {
-	font-weight: 700;
+	font-weight: 800;
+	font-size: 1.25em;
 	color: var(--pnm-accent);
 }
 
+.pnm-wc-submit {
+	width: 100%;
+	border-radius: 999px !important;
+}
+
 .pnm-wc-submit[disabled] {
-	opacity: 0.5;
+	opacity: 0.55;
 	cursor: not-allowed;
 }
 
-@media (max-width: 480px) {
-	.pnm-wc-products {
-		grid-template-columns: 1fr;
+/* ---------- Fly-to-bag animation ---------- */
+
+.pnm-wc-fly {
+	position: fixed;
+	z-index: 9999;
+	width: 60px;
+	height: 60px;
+	border-radius: 50%;
+	object-fit: cover;
+	pointer-events: none;
+	transform: translate(-50%, -50%) scale(1) rotate(0deg);
+	transition: left 0.65s cubic-bezier(0.5, -0.3, 0.7, 0.4),
+		top 0.65s cubic-bezier(0.5, -0.3, 0.7, 0.4),
+		transform 0.65s ease-in,
+		opacity 0.65s ease-in;
+	box-shadow: 0 4px 10px rgba( 0, 0, 0, 0.25 );
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.pnm-wc-fly {
+		display: none;
+	}
+
+	.pnm-wc-jar-btn,
+	.pnm-wc-progress-bar,
+	.pnm-wc-bag,
+	.pnm-wc-jar-badge {
+		transition: none;
 	}
 }

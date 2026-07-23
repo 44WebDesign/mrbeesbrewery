@@ -75,12 +75,14 @@ class PNM_WC_Frontend {
 			'pnm-wc',
 			'pnmWc',
 			array(
-				'min'          => $product->get_pnm_min(),
-				'max'          => $product->get_pnm_max(),
-				'i18nRemaining'=> __( 'Choose %d more', 'pick-n-mix-for-woocommerce' ),
-				'i18nFull'     => __( 'Box is full', 'pick-n-mix-for-woocommerce' ),
-				'i18nReady'    => __( 'Your box is ready', 'pick-n-mix-for-woocommerce' ),
-				'i18nOver'     => __( 'Please remove %d item(s)', 'pick-n-mix-for-woocommerce' ),
+				'min'           => $product->get_pnm_min(),
+				'max'           => $product->get_pnm_max(),
+				'i18nRemaining' => __( 'Add %d more', 'pick-n-mix-for-woocommerce' ),
+				'i18nFull'      => __( 'Bag is full!', 'pick-n-mix-for-woocommerce' ),
+				'i18nReady'     => __( 'Your bag is ready', 'pick-n-mix-for-woocommerce' ),
+				'i18nOver'      => __( 'Take out %d', 'pick-n-mix-for-woocommerce' ),
+				'i18nEmpty'     => __( 'Your bag is empty — tap the treats to fill it up!', 'pick-n-mix-for-woocommerce' ),
+				'i18nRemove'    => __( 'Remove', 'pick-n-mix-for-woocommerce' ),
 			)
 		);
 	}
@@ -112,80 +114,105 @@ class PNM_WC_Frontend {
 		$rule_label = ( $min === $max )
 			? sprintf(
 				/* translators: %d: number of items */
-				_n( 'Pick %d item to fill your box', 'Pick %d items to fill your box', $max, 'pick-n-mix-for-woocommerce' ),
+				_n( 'Pick any %d treat to fill your bag', 'Pick any %d treats to fill your bag', $max, 'pick-n-mix-for-woocommerce' ),
 				$max
 			)
 			: sprintf(
 				/* translators: 1: minimum, 2: maximum */
-				__( 'Pick between %1$d and %2$d items to fill your box', 'pick-n-mix-for-woocommerce' ),
+				__( 'Pick between %1$d and %2$d treats to fill your bag', 'pick-n-mix-for-woocommerce' ),
 				$min,
 				$max
 			);
 		?>
-		<form class="cart pnm-wc-form" method="post" enctype="multipart/form-data"
+		<form class="cart pnm-wc-form pnm-wc-stall" method="post" enctype="multipart/form-data"
 			data-min="<?php echo esc_attr( $min ); ?>" data-max="<?php echo esc_attr( $max ); ?>">
 
-			<div class="pnm-wc-header">
-				<p class="pnm-wc-rule"><?php echo esc_html( $rule_label ); ?></p>
-				<div class="pnm-wc-status" aria-live="polite">
-					<span class="pnm-wc-count"><span class="pnm-wc-count-current">0</span> / <?php echo esc_html( $max ); ?></span>
-					<span class="pnm-wc-message"></span>
+			<div class="pnm-wc-stall-layout">
+
+				<div class="pnm-wc-stall-main">
+					<div class="pnm-wc-stall-signboard">
+						<span class="pnm-wc-stall-sign-icon" aria-hidden="true">🍬</span>
+						<p class="pnm-wc-rule"><?php echo esc_html( $rule_label ); ?></p>
+					</div>
+
+					<ul class="pnm-wc-shelf">
+						<?php foreach ( $selectable as $product_id => $child ) : ?>
+							<?php
+							$max_for_item = $max;
+							if ( $child->managing_stock() && ! $child->backorders_allowed() ) {
+								$stock        = (int) $child->get_stock_quantity();
+								$max_for_item = ( $stock > 0 ) ? min( $max, $stock ) : 0;
+							}
+							$is_oos    = ( 0 === $max_for_item );
+							$thumb_url = wp_get_attachment_image_url( $child->get_image_id(), 'woocommerce_gallery_thumbnail' );
+							if ( ! $thumb_url ) {
+								$thumb_url = wc_placeholder_img_src( 'woocommerce_gallery_thumbnail' );
+							}
+							?>
+							<li class="pnm-wc-jar <?php echo $is_oos ? 'pnm-wc-jar--oos' : ''; ?>"
+								data-product-id="<?php echo esc_attr( $product_id ); ?>"
+								data-max="<?php echo esc_attr( $max_for_item ); ?>"
+								data-name="<?php echo esc_attr( $child->get_name() ); ?>"
+								data-thumb="<?php echo esc_url( $thumb_url ); ?>">
+
+								<button type="button" class="pnm-wc-jar-btn" <?php disabled( true, $is_oos ); ?>
+									aria-label="<?php echo esc_attr( sprintf( /* translators: %s: product name */ __( 'Add %s to your bag', 'pick-n-mix-for-woocommerce' ), $child->get_name() ) ); ?>">
+									<span class="pnm-wc-jar-badge" aria-hidden="true">0</span>
+									<span class="pnm-wc-jar-image"><?php echo wp_kses_post( $child->get_image( 'woocommerce_thumbnail' ) ); ?></span>
+									<span class="pnm-wc-jar-name"><?php echo esc_html( $child->get_name() ); ?></span>
+									<?php if ( $is_oos ) : ?>
+										<span class="pnm-wc-jar-stock"><?php esc_html_e( 'Sold out', 'pick-n-mix-for-woocommerce' ); ?></span>
+									<?php else : ?>
+										<span class="pnm-wc-jar-add"><?php esc_html_e( 'Add to bag', 'pick-n-mix-for-woocommerce' ); ?></span>
+									<?php endif; ?>
+								</button>
+
+								<input
+									type="number"
+									class="pnm-wc-qty-input"
+									name="pnm_qty[<?php echo esc_attr( $product_id ); ?>]"
+									value="0"
+									min="0"
+									max="<?php echo esc_attr( $max_for_item ); ?>"
+									step="1"
+									hidden
+								/>
+							</li>
+						<?php endforeach; ?>
+					</ul>
 				</div>
-				<div class="pnm-wc-progress"><span class="pnm-wc-progress-bar" style="width:0%"></span></div>
-			</div>
 
-			<ul class="pnm-wc-products">
-				<?php foreach ( $selectable as $product_id => $child ) : ?>
-					<?php
-					$max_for_item = $max;
-					if ( $child->managing_stock() && ! $child->backorders_allowed() ) {
-						$stock        = (int) $child->get_stock_quantity();
-						$max_for_item = ( $stock > 0 ) ? min( $max, $stock ) : 0;
-					}
-					?>
-					<li class="pnm-wc-product <?php echo ( 0 === $max_for_item ) ? 'pnm-wc-product--oos' : ''; ?>">
-						<div class="pnm-wc-product-image"><?php echo wp_kses_post( $child->get_image( 'woocommerce_thumbnail' ) ); ?></div>
-						<div class="pnm-wc-product-info">
-							<span class="pnm-wc-product-name"><?php echo esc_html( $child->get_name() ); ?></span>
-							<?php if ( $child->get_short_description() ) : ?>
-								<span class="pnm-wc-product-desc"><?php echo esc_html( wp_trim_words( wp_strip_all_tags( $child->get_short_description() ), 16 ) ); ?></span>
-							<?php endif; ?>
-							<?php if ( 0 === $max_for_item ) : ?>
-								<span class="pnm-wc-product-stock"><?php esc_html_e( 'Out of stock', 'pick-n-mix-for-woocommerce' ); ?></span>
-							<?php endif; ?>
+				<aside class="pnm-wc-bag-panel" aria-label="<?php esc_attr_e( 'Your pick n mix bag', 'pick-n-mix-for-woocommerce' ); ?>">
+					<div class="pnm-wc-bag">
+						<div class="pnm-wc-bag-top">
+							<span class="pnm-wc-bag-title"><?php esc_html_e( 'Your bag', 'pick-n-mix-for-woocommerce' ); ?></span>
+							<span class="pnm-wc-count"><span class="pnm-wc-count-current">0</span>&nbsp;/&nbsp;<?php echo esc_html( $max ); ?></span>
 						</div>
-						<div class="pnm-wc-product-qty">
-							<button type="button" class="pnm-wc-minus" aria-label="<?php esc_attr_e( 'Remove one', 'pick-n-mix-for-woocommerce' ); ?>" <?php disabled( 0, $max_for_item ); ?>>&minus;</button>
-							<input
-								type="number"
-								class="pnm-wc-qty-input"
-								name="pnm_qty[<?php echo esc_attr( $product_id ); ?>]"
-								value="0"
-								min="0"
-								max="<?php echo esc_attr( $max_for_item ); ?>"
-								step="1"
-								inputmode="numeric"
-								readonly
-								<?php disabled( 0, $max_for_item ); ?>
-							/>
-							<button type="button" class="pnm-wc-plus" aria-label="<?php esc_attr_e( 'Add one', 'pick-n-mix-for-woocommerce' ); ?>" <?php disabled( 0, $max_for_item ); ?>>+</button>
+
+						<div class="pnm-wc-progress"><span class="pnm-wc-progress-bar" style="width:0%"></span></div>
+
+						<div class="pnm-wc-bag-body">
+							<ul class="pnm-wc-bag-items" aria-live="polite"></ul>
+							<p class="pnm-wc-bag-empty"><?php esc_html_e( 'Your bag is empty — tap the treats to fill it up!', 'pick-n-mix-for-woocommerce' ); ?></p>
 						</div>
-					</li>
-				<?php endforeach; ?>
-			</ul>
 
-			<div class="pnm-wc-footer">
-				<div class="pnm-wc-price">
-					<span class="pnm-wc-price-label"><?php esc_html_e( 'Box price:', 'pick-n-mix-for-woocommerce' ); ?></span>
-					<span class="pnm-wc-price-value"><?php echo wp_kses_post( wc_price( $product->get_price() ) ); ?></span>
-				</div>
+						<div class="pnm-wc-bag-foot">
+							<p class="pnm-wc-message" aria-live="polite"></p>
+							<div class="pnm-wc-price">
+								<span class="pnm-wc-price-label"><?php esc_html_e( 'Bag price', 'pick-n-mix-for-woocommerce' ); ?></span>
+								<span class="pnm-wc-price-value"><?php echo wp_kses_post( wc_price( $product->get_price() ) ); ?></span>
+							</div>
 
-				<input type="hidden" name="add-to-cart" value="<?php echo esc_attr( $product->get_id() ); ?>" />
-				<input type="hidden" name="quantity" value="1" />
+							<input type="hidden" name="add-to-cart" value="<?php echo esc_attr( $product->get_id() ); ?>" />
+							<input type="hidden" name="quantity" value="1" />
 
-				<button type="submit" class="single_add_to_cart_button button alt pnm-wc-submit" disabled>
-					<?php echo esc_html( $product->single_add_to_cart_text() ); ?>
-				</button>
+							<button type="submit" class="single_add_to_cart_button button alt pnm-wc-submit" disabled>
+								<?php echo esc_html( $product->single_add_to_cart_text() ); ?>
+							</button>
+						</div>
+					</div>
+				</aside>
+
 			</div>
 		</form>
 		<?php

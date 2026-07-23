@@ -1,0 +1,190 @@
+/**
+ * Pick n Mix for WooCommerce - frontend styles.
+ * Intentionally lightweight and theme-agnostic; colours inherit where possible.
+ */
+
+.pnm-wc-form {
+	--pnm-accent: #4f7a3a;
+	--pnm-border: #e3e3e3;
+	--pnm-muted: #6b6b6b;
+	margin-top: 1.5em;
+}
+
+.pnm-wc-header {
+	margin-bottom: 1.25em;
+}
+
+.pnm-wc-rule {
+	font-weight: 600;
+	font-size: 1.05em;
+	margin: 0 0 0.4em;
+}
+
+.pnm-wc-status {
+	display: flex;
+	align-items: center;
+	gap: 0.75em;
+	margin-bottom: 0.5em;
+	font-size: 0.95em;
+}
+
+.pnm-wc-count {
+	font-weight: 700;
+	background: var(--pnm-accent);
+	color: #fff;
+	padding: 0.15em 0.6em;
+	border-radius: 999px;
+	white-space: nowrap;
+}
+
+.pnm-wc-message {
+	color: var(--pnm-muted);
+}
+
+.pnm-wc-ready .pnm-wc-message {
+	color: var(--pnm-accent);
+	font-weight: 600;
+}
+
+.pnm-wc-progress {
+	height: 8px;
+	background: var(--pnm-border);
+	border-radius: 999px;
+	overflow: hidden;
+}
+
+.pnm-wc-progress-bar {
+	display: block;
+	height: 100%;
+	width: 0;
+	background: var(--pnm-accent);
+	transition: width 0.25s ease;
+}
+
+.pnm-wc-products {
+	list-style: none;
+	margin: 0 0 1.5em;
+	padding: 0;
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+	gap: 0.9em;
+}
+
+.pnm-wc-product {
+	display: flex;
+	align-items: center;
+	gap: 0.75em;
+	border: 1px solid var(--pnm-border);
+	border-radius: 10px;
+	padding: 0.7em;
+	background: #fff;
+}
+
+.pnm-wc-product--oos {
+	opacity: 0.55;
+}
+
+.pnm-wc-product-image img {
+	width: 56px;
+	height: 56px;
+	object-fit: cover;
+	border-radius: 8px;
+	display: block;
+}
+
+.pnm-wc-product-info {
+	flex: 1 1 auto;
+	display: flex;
+	flex-direction: column;
+	min-width: 0;
+}
+
+.pnm-wc-product-name {
+	font-weight: 600;
+	line-height: 1.25;
+}
+
+.pnm-wc-product-desc {
+	font-size: 0.8em;
+	color: var(--pnm-muted);
+	margin-top: 0.15em;
+}
+
+.pnm-wc-product-stock {
+	font-size: 0.8em;
+	color: #b00;
+	margin-top: 0.15em;
+}
+
+.pnm-wc-product-qty {
+	display: flex;
+	align-items: center;
+	gap: 0.25em;
+	flex: 0 0 auto;
+}
+
+.pnm-wc-product-qty button {
+	width: 32px;
+	height: 32px;
+	border: 1px solid var(--pnm-border);
+	background: #f7f7f7;
+	border-radius: 8px;
+	font-size: 1.2em;
+	line-height: 1;
+	cursor: pointer;
+	padding: 0;
+	color: inherit;
+}
+
+.pnm-wc-product-qty button:hover:not(:disabled) {
+	border-color: var(--pnm-accent);
+	color: var(--pnm-accent);
+}
+
+.pnm-wc-product-qty button:disabled {
+	opacity: 0.4;
+	cursor: not-allowed;
+}
+
+.pnm-wc-qty-input {
+	width: 42px;
+	text-align: center;
+	border: 1px solid var(--pnm-border);
+	border-radius: 8px;
+	height: 32px;
+	padding: 0;
+	-moz-appearance: textfield;
+}
+
+.pnm-wc-qty-input::-webkit-outer-spin-button,
+.pnm-wc-qty-input::-webkit-inner-spin-button {
+	-webkit-appearance: none;
+	margin: 0;
+}
+
+.pnm-wc-footer {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 1em;
+}
+
+.pnm-wc-price {
+	font-size: 1.1em;
+}
+
+.pnm-wc-price-value {
+	font-weight: 700;
+	color: var(--pnm-accent);
+}
+
+.pnm-wc-submit[disabled] {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+
+@media (max-width: 480px) {
+	.pnm-wc-products {
+		grid-template-columns: 1fr;
+	}
+}

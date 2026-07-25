@@ -60,19 +60,44 @@ class PNM_WC_Helpers {
 	}
 
 	/**
-	 * Build the inline CSS-variable declarations for a box from its saved
-	 * colours, falling back to the defaults so the stall always looks complete.
+	 * Resolve the effective default for a colour field: the site-wide global
+	 * default set under WooCommerce → Products → Pick n Mix if present,
+	 * otherwise the plugin's built-in default.
 	 *
-	 * @param array<string,string> $colors Saved slug => hex map.
+	 * @param string $slug Colour field slug.
+	 * @return string Hex colour, or '' for an unknown slug.
+	 */
+	public static function get_default_color( $slug ) {
+		$fields = self::color_fields();
+		if ( ! isset( $fields[ $slug ] ) ) {
+			return '';
+		}
+
+		$global = '';
+		if ( class_exists( 'PNM_WC_Settings' ) ) {
+			$global = sanitize_hex_color( (string) get_option( PNM_WC_Settings::OPTION_PREFIX . $slug, '' ) );
+		}
+
+		return $global ? $global : $fields[ $slug ]['default'];
+	}
+
+	/**
+	 * Build the inline CSS-variable declarations for a box. Each colour resolves
+	 * as: the box's own override, then the global default, then the built-in
+	 * default, so the stall always looks complete.
+	 *
+	 * @param array<string,string> $colors Saved slug => hex map for the box.
 	 * @return string e.g. "--pnm-accent:#e05a8a;--pnm-bag:#f3e4c7;"
 	 */
 	public static function build_color_style( $colors ) {
 		$style = '';
 		foreach ( self::color_fields() as $slug => $field ) {
-			$value = ( ! empty( $colors[ $slug ] ) ) ? $colors[ $slug ] : $field['default'];
-			$hex   = sanitize_hex_color( $value );
-			if ( $hex ) {
-				$style .= $field['var'] . ':' . $hex . ';';
+			$value = ( ! empty( $colors[ $slug ] ) ) ? sanitize_hex_color( $colors[ $slug ] ) : '';
+			if ( ! $value ) {
+				$value = self::get_default_color( $slug );
+			}
+			if ( $value ) {
+				$style .= $field['var'] . ':' . $value . ';';
 			}
 		}
 		return $style;

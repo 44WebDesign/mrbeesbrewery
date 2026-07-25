@@ -6,7 +6,7 @@ Tested up to: 6.5
 Requires PHP: 7.2
 WC requires at least: 5.0
 WC tested up to: 9.0
-Stable tag: 1.1.0
+Stable tag: 1.2.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -33,6 +33,7 @@ Perfect for things like:
 * Add-to-cart is disabled until the box meets the rules; server-side validation backs it up.
 * Box contents are shown in the cart, at checkout, on the order and in emails.
 * Optional automatic stock reduction of the chosen child products when an order's stock is reduced.
+* Colour pickers for every part of the picker, with a site-wide default palette plus per-box overrides.
 * Works with WooCommerce High-Performance Order Storage (HPOS).
 
 == Installation ==
@@ -64,6 +65,9 @@ Yes. Each configured box is added as one cart line. Adding another box with the 
 If you enable stock management on the child products, their stock is reduced automatically when the order's stock is reduced. Out-of-stock items can't be added to a box.
 
 == Changelog ==
+
+= 1.2.0 =
+* Added global default colours under WooCommerce → Settings → Products → Pick n Mix, so new boxes start from your brand palette. Each box can still override them, and each colour resolves as box override → global default → built-in default.
 
 = 1.1.0 =
 * Product page: the featured product image is hidden so the treats lead the layout.

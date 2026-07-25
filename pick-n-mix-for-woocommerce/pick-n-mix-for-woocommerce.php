@@ -3,7 +3,7 @@
  * Plugin Name: Pick n Mix for WooCommerce
  * Plugin URI:  https://example.com/pick-n-mix-for-woocommerce
  * Description: Create "pick n mix" box products. The customer chooses a set number of your existing simple products (e.g. pick any 3 dog treats) and buys the box for one fixed price.
- * Version:     1.1.0
+ * Version:     1.2.0
  * Author:      44 Web Design
  * Text Domain: pick-n-mix-for-woocommerce
  * Domain Path: /languages
@@ -17,7 +17,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'PNM_WC_VERSION', '1.1.0' );
+define( 'PNM_WC_VERSION', '1.2.0' );
 define( 'PNM_WC_FILE', __FILE__ );
 define( 'PNM_WC_PATH', plugin_dir_path( __FILE__ ) );
 define( 'PNM_WC_URL', plugin_dir_url( __FILE__ ) );
@@ -71,6 +71,7 @@ final class PNM_WC_Plugin {
 		add_filter( 'woocommerce_product_class', array( $this, 'product_class' ), 10, 2 );
 
 		// Boot the sub-modules.
+		PNM_WC_Settings::instance();
 		PNM_WC_Admin::instance();
 		PNM_WC_Frontend::instance();
 		PNM_WC_Cart::instance();
@@ -85,6 +86,7 @@ final class PNM_WC_Plugin {
 	private function includes() {
 		require_once PNM_WC_PATH . 'includes/class-wc-product-pick-n-mix.php';
 		require_once PNM_WC_PATH . 'includes/class-pnm-wc-helpers.php';
+		require_once PNM_WC_PATH . 'includes/class-pnm-wc-settings.php';
 		require_once PNM_WC_PATH . 'includes/class-pnm-wc-admin.php';
 		require_once PNM_WC_PATH . 'includes/class-pnm-wc-frontend.php';
 		require_once PNM_WC_PATH . 'includes/class-pnm-wc-cart.php';

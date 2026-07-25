@@ -233,7 +233,7 @@ class PNM_WC_Admin {
 		<p class="form-field">
 			<label><?php esc_html_e( 'Colours', 'pick-n-mix-for-woocommerce' ); ?></label>
 			<span class="description" style="display:inline-block;max-width:60%;vertical-align:top;">
-				<?php esc_html_e( 'Recolour the front-end picker. Leave a swatch untouched to use the default.', 'pick-n-mix-for-woocommerce' ); ?>
+				<?php esc_html_e( 'Recolour the front-end picker for this box. Leave a swatch untouched to use your global default (set under WooCommerce → Settings → Products → Pick n Mix).', 'pick-n-mix-for-woocommerce' ); ?>
 			</span>
 		</p>
 		<?php
@@ -248,7 +248,7 @@ class PNM_WC_Admin {
 					id="_pnm_colors_<?php echo esc_attr( $slug ); ?>"
 					name="_pnm_colors[<?php echo esc_attr( $slug ); ?>]"
 					value="<?php echo esc_attr( $value ); ?>"
-					data-default-color="<?php echo esc_attr( $field['default'] ); ?>"
+					data-default-color="<?php echo esc_attr( PNM_WC_Helpers::get_default_color( $slug ) ); ?>"
 				/>
 			</p>
 			<?php

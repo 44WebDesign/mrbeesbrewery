@@ -27,9 +27,37 @@
 
 @media (min-width: 900px) {
 	.pnm-wc-stall-layout {
-		grid-template-columns: 1fr 300px;
+		grid-template-columns: 1fr 320px;
 		align-items: start;
 	}
+}
+
+/* ----------------------------------------------------------------------
+ * Full-width single-product layout.
+ *
+ * With the featured image removed, most themes still reserve the empty
+ * gallery column and leave the summary at ~half width. On pick n mix
+ * product pages we hide that empty column and let the summary (which holds
+ * our stall + bag) span the full width. Covers the common float-based and
+ * CSS-grid single-product layouts.
+ * ---------------------------------------------------------------------- */
+
+body.pnm-wc-no-product-image div.product .woocommerce-product-gallery,
+body.pnm-wc-no-product-image div.product > .images,
+body.pnm-wc-no-product-image div.product div.images {
+	display: none !important;
+}
+
+body.pnm-wc-no-product-image div.product .summary,
+body.pnm-wc-no-product-image div.product .entry-summary,
+body.pnm-wc-no-product-image div.product .summary.entry-summary {
+	width: 100% !important;
+	max-width: 100% !important;
+	float: none !important;
+	margin-left: 0 !important;
+	margin-right: 0 !important;
+	clear: both !important;
+	grid-column: 1 / -1 !important; /* span every column in grid layouts */
 }
 
 /* ---------- Stall / signboard ---------- */

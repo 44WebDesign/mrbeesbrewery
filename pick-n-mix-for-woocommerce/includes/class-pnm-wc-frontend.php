@@ -38,6 +38,37 @@ class PNM_WC_Frontend {
 		// WooCommerce fires woocommerce_{type}_add_to_cart for the product type.
 		add_action( 'woocommerce_' . PNM_WC_PRODUCT_TYPE . '_add_to_cart', array( $this, 'render_add_to_cart' ), 30 );
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_assets' ) );
+
+		// Hide the big featured image on a pick n mix product page; the treats
+		// themselves are the visuals here.
+		add_action( 'wp', array( $this, 'maybe_hide_product_image' ) );
+	}
+
+	/**
+	 * Remove the single product featured image/gallery for pick n mix boxes so
+	 * the layout starts straight at the treats.
+	 */
+	public function maybe_hide_product_image() {
+		if ( ! function_exists( 'is_product' ) || ! is_product() ) {
+			return;
+		}
+
+		$product = wc_get_product( get_queried_object_id() );
+		if ( ! $product instanceof WC_Product_Pick_N_Mix ) {
+			return;
+		}
+
+		remove_action( 'woocommerce_before_single_product_summary', 'woocommerce_show_product_images', 20 );
+		add_filter( 'woocommerce_single_product_image_thumbnail_html', '__return_empty_string' );
+
+		// Let themes/CSS respond to the imageless layout if they wish.
+		add_filter(
+			'body_class',
+			function ( $classes ) {
+				$classes[] = 'pnm-wc-no-product-image';
+				return $classes;
+			}
+		);
 	}
 
 	/**
@@ -137,8 +168,11 @@ class PNM_WC_Frontend {
 				$min,
 				$max
 			);
+
+		$color_style = PNM_WC_Helpers::build_color_style( $product->get_pnm_colors() );
 		?>
 		<form class="cart pnm-wc-form pnm-wc-stall" method="post" enctype="multipart/form-data"
+			style="<?php echo esc_attr( $color_style ); ?>"
 			data-min="<?php echo esc_attr( $min ); ?>" data-max="<?php echo esc_attr( $max ); ?>">
 
 			<div class="pnm-wc-stall-layout">

@@ -13,6 +13,72 @@ defined( 'ABSPATH' ) || exit;
 class PNM_WC_Helpers {
 
 	/**
+	 * The configurable colour fields shared by the admin pickers and the
+	 * front-end output. Each maps a slug to a human label, the CSS custom
+	 * property it controls, and a default value.
+	 *
+	 * @return array<string,array{label:string,var:string,default:string}>
+	 */
+	public static function color_fields() {
+		return array(
+			'accent'   => array(
+				'label'   => __( 'Primary colour (signboard, buttons & price)', 'pick-n-mix-for-woocommerce' ),
+				'var'     => '--pnm-accent',
+				'default' => '#e05a8a',
+			),
+			'accent2'  => array(
+				'label'   => __( 'Highlight colour (badges & progress bar)', 'pick-n-mix-for-woocommerce' ),
+				'var'     => '--pnm-accent-2',
+				'default' => '#ffd23f',
+			),
+			'ink'      => array(
+				'label'   => __( 'Text colour', 'pick-n-mix-for-woocommerce' ),
+				'var'     => '--pnm-ink',
+				'default' => '#3a2b2f',
+			),
+			'jar'      => array(
+				'label'   => __( 'Treat tile background', 'pick-n-mix-for-woocommerce' ),
+				'var'     => '--pnm-jar',
+				'default' => '#ffffff',
+			),
+			'border'   => array(
+				'label'   => __( 'Treat tile border', 'pick-n-mix-for-woocommerce' ),
+				'var'     => '--pnm-border',
+				'default' => '#f0d9e2',
+			),
+			'bag'      => array(
+				'label'   => __( 'Bag colour', 'pick-n-mix-for-woocommerce' ),
+				'var'     => '--pnm-bag',
+				'default' => '#f3e4c7',
+			),
+			'bag_dark' => array(
+				'label'   => __( 'Bag trim / fold colour', 'pick-n-mix-for-woocommerce' ),
+				'var'     => '--pnm-bag-dark',
+				'default' => '#e4d0aa',
+			),
+		);
+	}
+
+	/**
+	 * Build the inline CSS-variable declarations for a box from its saved
+	 * colours, falling back to the defaults so the stall always looks complete.
+	 *
+	 * @param array<string,string> $colors Saved slug => hex map.
+	 * @return string e.g. "--pnm-accent:#e05a8a;--pnm-bag:#f3e4c7;"
+	 */
+	public static function build_color_style( $colors ) {
+		$style = '';
+		foreach ( self::color_fields() as $slug => $field ) {
+			$value = ( ! empty( $colors[ $slug ] ) ) ? $colors[ $slug ] : $field['default'];
+			$hex   = sanitize_hex_color( $value );
+			if ( $hex ) {
+				$style .= $field['var'] . ':' . $hex . ';';
+			}
+		}
+		return $style;
+	}
+
+	/**
 	 * Parse the posted selection ($_POST['pnm_qty']) into a clean array of
 	 * [ product_id => qty ], keeping only positive quantities for products
 	 * that the box actually allows.

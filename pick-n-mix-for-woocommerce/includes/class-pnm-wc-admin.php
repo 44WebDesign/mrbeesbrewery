@@ -86,6 +86,7 @@ class PNM_WC_Admin {
 		$prices       = array();
 		$product_ids  = array();
 		$category_ids = array();
+		$colors       = array();
 
 		if ( $product instanceof WC_Product_Pick_N_Mix ) {
 			$min          = $product->get_pnm_min( 'edit' );
@@ -93,6 +94,7 @@ class PNM_WC_Admin {
 			$prices       = $product->get_pnm_prices( 'edit' );
 			$product_ids  = $product->get_pnm_products( 'edit' );
 			$category_ids = $product->get_pnm_categories( 'edit' );
+			$colors       = $product->get_pnm_colors( 'edit' );
 		}
 
 		echo '<div id="pnm_wc_product_data" class="panel woocommerce_options_panel hidden">';
@@ -225,6 +227,35 @@ class PNM_WC_Admin {
 
 		echo '</div>';
 
+		// Colour pickers for the front-end stall and bag.
+		echo '<div class="options_group pnm-wc-colours-group">';
+		?>
+		<p class="form-field">
+			<label><?php esc_html_e( 'Colours', 'pick-n-mix-for-woocommerce' ); ?></label>
+			<span class="description" style="display:inline-block;max-width:60%;vertical-align:top;">
+				<?php esc_html_e( 'Recolour the front-end picker. Leave a swatch untouched to use the default.', 'pick-n-mix-for-woocommerce' ); ?>
+			</span>
+		</p>
+		<?php
+		foreach ( PNM_WC_Helpers::color_fields() as $slug => $field ) {
+			$value = isset( $colors[ $slug ] ) ? $colors[ $slug ] : '';
+			?>
+			<p class="form-field pnm-wc-colour-field">
+				<label for="_pnm_colors_<?php echo esc_attr( $slug ); ?>"><?php echo esc_html( $field['label'] ); ?></label>
+				<input
+					type="text"
+					class="pnm-wc-color-field"
+					id="_pnm_colors_<?php echo esc_attr( $slug ); ?>"
+					name="_pnm_colors[<?php echo esc_attr( $slug ); ?>]"
+					value="<?php echo esc_attr( $value ); ?>"
+					data-default-color="<?php echo esc_attr( $field['default'] ); ?>"
+				/>
+			</p>
+			<?php
+		}
+
+		echo '</div>';
+
 		wp_nonce_field( 'pnm_wc_save_product', 'pnm_wc_nonce' );
 
 		echo '</div>';
@@ -268,11 +299,24 @@ class PNM_WC_Admin {
 		$product_ids  = isset( $_POST['_pnm_products'] ) ? array_map( 'absint', (array) wp_unslash( $_POST['_pnm_products'] ) ) : array();
 		$category_ids = isset( $_POST['_pnm_categories'] ) ? array_map( 'absint', (array) wp_unslash( $_POST['_pnm_categories'] ) ) : array();
 
+		// Colours: keep only recognised fields, sanitised as hex.
+		$colors     = array();
+		$colors_raw = isset( $_POST['_pnm_colors'] ) ? (array) wp_unslash( $_POST['_pnm_colors'] ) : array();
+		foreach ( array_keys( PNM_WC_Helpers::color_fields() ) as $slug ) {
+			if ( ! empty( $colors_raw[ $slug ] ) ) {
+				$hex = sanitize_hex_color( $colors_raw[ $slug ] );
+				if ( $hex ) {
+					$colors[ $slug ] = $hex;
+				}
+			}
+		}
+
 		$product->set_pnm_min( $min );
 		$product->set_pnm_max( $max );
 		$product->set_pnm_prices( $prices );
 		$product->set_pnm_products( $product_ids );
 		$product->set_pnm_categories( $category_ids );
+		$product->set_pnm_colors( $colors );
 
 		// Store the cheapest box size's price as the product's regular price so
 		// WooCommerce always has a native price to sort by / mark it purchasable.
@@ -303,10 +347,12 @@ class PNM_WC_Admin {
 			return;
 		}
 
+		wp_enqueue_style( 'wp-color-picker' );
+
 		wp_enqueue_script(
 			'pnm-wc-admin',
 			PNM_WC_URL . 'assets/js/pick-n-mix-admin.js',
-			array( 'jquery' ),
+			array( 'jquery', 'wp-color-picker' ),
 			PNM_WC_VERSION,
 			true
 		);

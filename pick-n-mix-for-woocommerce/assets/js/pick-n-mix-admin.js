@@ -72,5 +72,10 @@
 		$( '#_pnm_min, #_pnm_max' ).on( 'change keyup', buildPriceRows );
 		// Rebuild once on load so a stale server-rendered range is corrected.
 		buildPriceRows();
+
+		// Turn the colour text inputs into WordPress colour pickers.
+		if ( $.fn.wpColorPicker ) {
+			$( '.pnm-wc-color-field' ).wpColorPicker();
+		}
 	} );
 } )( jQuery );

@@ -27,6 +27,7 @@ class WC_Product_Pick_N_Mix extends WC_Product {
 		'pnm_prices'     => array(),
 		'pnm_products'   => array(),
 		'pnm_categories' => array(),
+		'pnm_colors'     => array(),
 	);
 
 	/**
@@ -255,6 +256,32 @@ class WC_Product_Pick_N_Mix extends WC_Product {
 		}
 
 		return $this->get_regular_price();
+	}
+
+	/**
+	 * Get the saved colour overrides, keyed by colour field slug.
+	 *
+	 * @param string $context View or edit context.
+	 * @return array<string,string>
+	 */
+	public function get_pnm_colors( $context = 'view' ) {
+		return (array) $this->get_prop( 'pnm_colors', $context );
+	}
+
+	/**
+	 * Set the colour overrides. Values are sanitised as hex colours.
+	 *
+	 * @param array<string,string> $value Slug => hex colour.
+	 */
+	public function set_pnm_colors( $value ) {
+		$clean = array();
+		foreach ( (array) $value as $key => $hex ) {
+			$hex = sanitize_hex_color( $hex );
+			if ( $hex ) {
+				$clean[ sanitize_key( $key ) ] = $hex;
+			}
+		}
+		$this->set_prop( 'pnm_colors', $clean );
 	}
 
 	/**

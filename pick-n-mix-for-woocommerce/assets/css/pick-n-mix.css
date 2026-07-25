@@ -42,8 +42,8 @@
 		45deg,
 		var(--pnm-accent),
 		var(--pnm-accent) 18px,
-		#f4779f 18px,
-		#f4779f 36px
+		color-mix( in srgb, var(--pnm-accent) 82%, #fff ) 18px,
+		color-mix( in srgb, var(--pnm-accent) 82%, #fff ) 36px
 	);
 	color: #fff;
 	padding: 0.7em 1em;
@@ -71,8 +71,16 @@
 	margin: 0;
 	padding: 0;
 	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+	/* Up to two treats per row on small screens... */
+	grid-template-columns: repeat(2, 1fr);
 	gap: 0.9em;
+}
+
+/* ...and a maximum of three per row once there is room. */
+@media (min-width: 560px) {
+	.pnm-wc-shelf {
+		grid-template-columns: repeat(3, 1fr);
+	}
 }
 
 .pnm-wc-jar {
@@ -101,7 +109,7 @@
 .pnm-wc-jar-btn:hover:not(:disabled) {
 	transform: translateY(-3px);
 	border-color: var(--pnm-accent);
-	box-shadow: 0 8px 18px rgba( 224, 90, 138, 0.18 );
+	box-shadow: 0 8px 18px color-mix( in srgb, var(--pnm-accent) 22%, transparent );
 }
 
 .pnm-wc-jar-btn:active:not(:disabled) {
@@ -114,7 +122,7 @@
 
 .pnm-wc-jar.is-picked .pnm-wc-jar-btn {
 	border-color: var(--pnm-accent);
-	background: #fff5f8;
+	background: color-mix( in srgb, var(--pnm-accent) 8%, var(--pnm-jar) );
 }
 
 .pnm-wc-jar--oos .pnm-wc-jar-btn {
@@ -127,7 +135,7 @@
 	height: 84px;
 	object-fit: cover;
 	border-radius: 50%;
-	background: #faf3f6;
+	background: color-mix( in srgb, var(--pnm-accent) 6%, #fff );
 	box-shadow: inset 0 0 0 4px rgba( 255, 255, 255, 0.6 ), 0 2px 6px rgba( 0, 0, 0, 0.08 );
 	display: block;
 }
@@ -184,27 +192,67 @@
 }
 
 .pnm-wc-bag {
-	background: var(--pnm-bag);
-	background-image: linear-gradient( 180deg, rgba( 255, 255, 255, 0.35 ), rgba( 255, 255, 255, 0 ) 40% );
-	border-radius: 6px 6px var(--pnm-radius) var(--pnm-radius);
-	box-shadow: 0 10px 24px rgba( 0, 0, 0, 0.12 );
-	overflow: hidden;
+	position: relative;
+	color: var(--pnm-ink);
+	background-color: var(--pnm-bag);
+	/* Candy-stripe paper with a soft sheen at the top. */
+	background-image:
+		linear-gradient( 180deg, rgba( 255, 255, 255, 0.5 ), rgba( 255, 255, 255, 0 ) 32% ),
+		repeating-linear-gradient(
+			90deg,
+			color-mix( in srgb, var(--pnm-bag) 93%, #fff ) 0,
+			color-mix( in srgb, var(--pnm-bag) 93%, #fff ) 13px,
+			color-mix( in srgb, var(--pnm-bag) 88%, #000 ) 13px,
+			color-mix( in srgb, var(--pnm-bag) 88%, #000 ) 26px
+		);
+	border-radius: 4px 4px 26px 26px;
+	box-shadow:
+		0 14px 28px rgba( 0, 0, 0, 0.17 ),
+		inset 0 -26px 28px -22px rgba( 0, 0, 0, 0.3 ),
+		inset 0 1px 0 rgba( 255, 255, 255, 0.55 );
+	padding-top: 24px; /* room for the folded cuff */
+	margin-top: 10px;  /* room for the twist tie */
 	transition: transform 0.2s ease;
 }
 
-/* Folded paper-bag top */
+/* Folded, pinked (zig-zag) paper cuff along the top of the bag. */
 .pnm-wc-bag::before {
 	content: "";
-	display: block;
-	height: 14px;
-	background: repeating-linear-gradient(
-		90deg,
-		var(--pnm-bag-dark),
-		var(--pnm-bag-dark) 14px,
-		#d9c39a 14px,
-		#d9c39a 28px
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	height: 24px;
+	background: linear-gradient(
+		180deg,
+		color-mix( in srgb, var(--pnm-bag-dark) 78%, #fff ),
+		var(--pnm-bag-dark)
 	);
-	box-shadow: inset 0 -3px 4px rgba( 0, 0, 0, 0.08 );
+	box-shadow: 0 2px 3px rgba( 0, 0, 0, 0.12 );
+	-webkit-mask:
+		linear-gradient( #000 0 0 ) top / 100% 16px no-repeat,
+		conic-gradient( from -45deg at 50% 0, #000 90deg, transparent 0 ) bottom / 16px 9px repeat-x;
+	mask:
+		linear-gradient( #000 0 0 ) top / 100% 16px no-repeat,
+		conic-gradient( from -45deg at 50% 0, #000 90deg, transparent 0 ) bottom / 16px 9px repeat-x;
+}
+
+/* Twisted-paper tie peeking above the bag. */
+.pnm-wc-bag::after {
+	content: "";
+	position: absolute;
+	top: -9px;
+	left: 50%;
+	width: 48px;
+	height: 16px;
+	transform: translateX( -50% );
+	background: linear-gradient(
+		180deg,
+		color-mix( in srgb, var(--pnm-bag-dark) 75%, #fff ),
+		var(--pnm-bag-dark)
+	);
+	border-radius: 10px 10px 5px 5px / 12px 12px 5px 5px;
+	box-shadow: inset 0 -2px 3px rgba( 0, 0, 0, 0.2 );
 }
 
 .pnm-wc-bag--bump {
@@ -275,7 +323,7 @@
 	display: flex;
 	align-items: center;
 	gap: 0.5em;
-	background: #fff;
+	background: var(--pnm-jar);
 	border-radius: 999px;
 	padding: 0.25em 0.5em;
 	box-shadow: 0 1px 3px rgba( 0, 0, 0, 0.08 );
@@ -316,7 +364,7 @@
 	height: 22px;
 	border-radius: 50%;
 	border: none;
-	background: #f2e6ea;
+	background: color-mix( in srgb, var(--pnm-accent) 14%, #fff );
 	color: var(--pnm-ink);
 	font-size: 1em;
 	line-height: 1;

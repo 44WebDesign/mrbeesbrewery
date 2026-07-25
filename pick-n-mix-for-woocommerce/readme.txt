@@ -6,7 +6,7 @@ Tested up to: 6.5
 Requires PHP: 7.2
 WC requires at least: 5.0
 WC tested up to: 9.0
-Stable tag: 1.2.2
+Stable tag: 1.2.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -65,6 +65,9 @@ Yes. Each configured box is added as one cart line. Adding another box with the 
 If you enable stock management on the child products, their stock is reduced automatically when the order's stock is reduced. Out-of-stock items can't be added to a box.
 
 == Changelog ==
+
+= 1.2.3 =
+* Full-width layout now also handles page-builder column layouts (Divi, Elementor, block columns): the column holding the picker is widened to full width and the sibling image column is hidden. Fixes the picker showing at half width on Divi product templates.
 
 = 1.2.2 =
 * Full-width layout now applied via JavaScript that hides the empty gallery column and forces the picker's column to full width, so it works across float, flexbox and grid single-product themes (the CSS-only rule missed flexbox layouts).

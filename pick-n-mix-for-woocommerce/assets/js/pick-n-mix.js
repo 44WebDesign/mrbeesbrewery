@@ -25,39 +25,12 @@
 				formEl.closest( '[class*="product-type-"]' ) ||
 				formEl.closest( '[class*="post-"]' );
 
-			if ( ! product ) {
-				return;
-			}
+			var scope = product || document;
 
-			// Hide the (now empty) product image / gallery column.
-			var galleries = product.querySelectorAll(
-				'.woocommerce-product-gallery, .images, div.images, figure.woocommerce-product-gallery, .wp-block-woocommerce-product-image-gallery'
-			);
-			Array.prototype.forEach.call( galleries, function ( el ) {
-				if ( ! el.contains( formEl ) ) {
-					el.style.setProperty( 'display', 'none', 'important' );
+			function widen( el ) {
+				if ( ! el ) {
+					return;
 				}
-			} );
-
-			// Collect the column(s) to widen: the summary wrapper and the direct
-			// child of .product that contains the form (covers nested/flex/grid).
-			var cols    = [];
-			var summary = formEl.closest( '.summary' ) ||
-				formEl.closest( '.entry-summary' ) ||
-				formEl.closest( '.product-summary' );
-			if ( summary ) {
-				cols.push( summary );
-			}
-
-			var child = formEl;
-			while ( child && child.parentElement && child.parentElement !== product ) {
-				child = child.parentElement;
-			}
-			if ( child && child !== summary && child.parentElement === product ) {
-				cols.push( child );
-			}
-
-			cols.forEach( function ( el ) {
 				el.classList.add( 'pnm-wc-fullwidth-col' );
 				el.style.setProperty( 'width', '100%', 'important' );
 				el.style.setProperty( 'max-width', '100%', 'important' );
@@ -67,7 +40,54 @@
 				el.style.setProperty( 'grid-column', '1 / -1', 'important' );
 				el.style.setProperty( 'margin-left', '0', 'important' );
 				el.style.setProperty( 'margin-right', '0', 'important' );
+			}
+
+			// 1) Hide the (now empty) product image / gallery module.
+			var galleries = scope.querySelectorAll(
+				'.woocommerce-product-gallery, .images, div.images, figure.woocommerce-product-gallery, .wp-block-woocommerce-product-image-gallery, .et_pb_wc_images'
+			);
+			Array.prototype.forEach.call( galleries, function ( el ) {
+				if ( ! el.contains( formEl ) ) {
+					el.style.setProperty( 'display', 'none', 'important' );
+				}
 			} );
+
+			// 2) Page-builder column layouts (Divi, Elementor, block columns):
+			// widen the column holding the form and hide the sibling column that
+			// held the image, so the picker uses the full width.
+			var builderCol = formEl.closest(
+				'.et_pb_column, .elementor-column, .wp-block-column, .e-con-inner > .e-child'
+			);
+			if ( builderCol && builderCol.parentElement ) {
+				Array.prototype.forEach.call( builderCol.parentElement.children, function ( sib ) {
+					if ( sib === builderCol || sib.contains( formEl ) ) {
+						return;
+					}
+					if ( sib.className && typeof sib.className === 'string' &&
+						/(_column|elementor-column|wp-block-column|e-child)/.test( sib.className ) ) {
+						sib.style.setProperty( 'display', 'none', 'important' );
+					}
+				} );
+				widen( builderCol );
+				return;
+			}
+
+			// 3) Classic WooCommerce single-product layout: widen the summary
+			// column and/or the direct child of .product that holds the form.
+			if ( product ) {
+				var summary = formEl.closest( '.summary' ) ||
+					formEl.closest( '.entry-summary' ) ||
+					formEl.closest( '.product-summary' );
+				widen( summary );
+
+				var child = formEl;
+				while ( child && child.parentElement && child.parentElement !== product ) {
+					child = child.parentElement;
+				}
+				if ( child && child !== summary && child.parentElement === product ) {
+					widen( child );
+				}
+			}
 		}() );
 
 		var min = parseInt( $form.data( 'min' ), 10 ) || 1;

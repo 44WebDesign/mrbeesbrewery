@@ -12,6 +12,64 @@
 			return;
 		}
 
+		// ------------------------------------------------------------------
+		// Break the picker out of WooCommerce's two-column single-product
+		// layout. With the product image hidden, most themes still reserve the
+		// empty gallery column, leaving the picker at ~half width. We walk the
+		// real DOM (theme-agnostic) to hide that column and force the column
+		// holding our form to full width with inline !important styles.
+		// ------------------------------------------------------------------
+		( function fullWidthLayout() {
+			var formEl  = $form[ 0 ];
+			var product = formEl.closest( '.product' ) ||
+				formEl.closest( '[class*="product-type-"]' ) ||
+				formEl.closest( '[class*="post-"]' );
+
+			if ( ! product ) {
+				return;
+			}
+
+			// Hide the (now empty) product image / gallery column.
+			var galleries = product.querySelectorAll(
+				'.woocommerce-product-gallery, .images, div.images, figure.woocommerce-product-gallery, .wp-block-woocommerce-product-image-gallery'
+			);
+			Array.prototype.forEach.call( galleries, function ( el ) {
+				if ( ! el.contains( formEl ) ) {
+					el.style.setProperty( 'display', 'none', 'important' );
+				}
+			} );
+
+			// Collect the column(s) to widen: the summary wrapper and the direct
+			// child of .product that contains the form (covers nested/flex/grid).
+			var cols    = [];
+			var summary = formEl.closest( '.summary' ) ||
+				formEl.closest( '.entry-summary' ) ||
+				formEl.closest( '.product-summary' );
+			if ( summary ) {
+				cols.push( summary );
+			}
+
+			var child = formEl;
+			while ( child && child.parentElement && child.parentElement !== product ) {
+				child = child.parentElement;
+			}
+			if ( child && child !== summary && child.parentElement === product ) {
+				cols.push( child );
+			}
+
+			cols.forEach( function ( el ) {
+				el.classList.add( 'pnm-wc-fullwidth-col' );
+				el.style.setProperty( 'width', '100%', 'important' );
+				el.style.setProperty( 'max-width', '100%', 'important' );
+				el.style.setProperty( 'flex', '1 1 100%', 'important' );
+				el.style.setProperty( 'flex-basis', '100%', 'important' );
+				el.style.setProperty( 'float', 'none', 'important' );
+				el.style.setProperty( 'grid-column', '1 / -1', 'important' );
+				el.style.setProperty( 'margin-left', '0', 'important' );
+				el.style.setProperty( 'margin-right', '0', 'important' );
+			} );
+		}() );
+
 		var min = parseInt( $form.data( 'min' ), 10 ) || 1;
 		var max = parseInt( $form.data( 'max' ), 10 ) || 1;
 

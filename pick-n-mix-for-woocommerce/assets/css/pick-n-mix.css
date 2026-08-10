@@ -180,10 +180,22 @@ body.pnm-wc-no-product-image div.product .summary.entry-summary {
 	display: block;
 }
 
-.pnm-wc-jar-name {
+/* Product name under each treat image. Forced visible and dark so a theme
+ * that restyles button text (e.g. white button text) can't hide it on the
+ * white tile. */
+.pnm-wc-stall .pnm-wc-jar-name {
+	display: block !important;
+	visibility: visible !important;
+	margin-top: 0.35em;
 	font-weight: 600;
 	font-size: 0.9em;
-	line-height: 1.2;
+	line-height: 1.25;
+	color: var(--pnm-ink) !important;
+	text-transform: none;
+	letter-spacing: normal;
+	overflow-wrap: anywhere;
+	word-wrap: break-word;
+	hyphens: auto;
 }
 
 .pnm-wc-jar-add {

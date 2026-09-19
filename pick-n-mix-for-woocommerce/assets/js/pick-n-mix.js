@@ -42,21 +42,68 @@
 				el.style.setProperty( 'margin-right', '0', 'important' );
 			}
 
-			// 1) Hide the (now empty) product image / gallery module.
-			var galleries = scope.querySelectorAll(
-				'.woocommerce-product-gallery, .images, div.images, figure.woocommerce-product-gallery, .wp-block-woocommerce-product-image-gallery, .et_pb_wc_images'
-			);
-			Array.prototype.forEach.call( galleries, function ( el ) {
-				if ( ! el.contains( formEl ) ) {
+			function hide( el ) {
+				if ( el ) {
 					el.style.setProperty( 'display', 'none', 'important' );
 				}
+			}
+
+			// Locate the product image / gallery (whatever the theme or builder
+			// calls it) that is NOT part of our own picker.
+			var gallerySelector =
+				'.woocommerce-product-gallery, figure.woocommerce-product-gallery, ' +
+				'.wp-block-woocommerce-product-image-gallery, .wc-block-components-product-image-gallery, ' +
+				'.elementor-widget-woocommerce-product-images, .et_pb_wc_images, ' +
+				'.images, div.images';
+			var galleryEl = null;
+			Array.prototype.some.call( scope.querySelectorAll( gallerySelector ), function ( el ) {
+				if ( ! el.contains( formEl ) ) {
+					galleryEl = el;
+					return true;
+				}
+				return false;
 			} );
 
-			// 2) Page-builder column layouts (Divi, Elementor, block columns):
-			// widen the column holding the form and hide the sibling column that
-			// held the image, so the picker uses the full width.
+			// Always hide the gallery element itself.
+			hide( galleryEl );
+
+			// Preferred, builder-agnostic approach: use the actual relationship
+			// between the image and the form. Find their lowest common ancestor,
+			// hide the branch (column) that holds the image, and widen the branch
+			// (column) that holds the form.
+			if ( galleryEl ) {
+				var galleryAncestors = [];
+				for ( var a = galleryEl; a; a = a.parentElement ) {
+					galleryAncestors.push( a );
+				}
+
+				var lca = formEl;
+				while ( lca && galleryAncestors.indexOf( lca ) === -1 ) {
+					lca = lca.parentElement;
+				}
+
+				if ( lca ) {
+					var formBranch = formEl;
+					while ( formBranch && formBranch.parentElement !== lca ) {
+						formBranch = formBranch.parentElement;
+					}
+
+					var galleryBranch = galleryEl;
+					while ( galleryBranch && galleryBranch.parentElement !== lca ) {
+						galleryBranch = galleryBranch.parentElement;
+					}
+
+					if ( galleryBranch && galleryBranch !== formBranch ) {
+						hide( galleryBranch );
+					}
+					widen( formBranch );
+					return;
+				}
+			}
+
+			// Fallback 1: known page-builder column classes.
 			var builderCol = formEl.closest(
-				'.et_pb_column, .elementor-column, .wp-block-column, .e-con-inner > .e-child'
+				'.et_pb_column, .elementor-column, .wp-block-column, .e-con.e-child'
 			);
 			if ( builderCol && builderCol.parentElement ) {
 				Array.prototype.forEach.call( builderCol.parentElement.children, function ( sib ) {
@@ -65,15 +112,14 @@
 					}
 					if ( sib.className && typeof sib.className === 'string' &&
 						/(_column|elementor-column|wp-block-column|e-child)/.test( sib.className ) ) {
-						sib.style.setProperty( 'display', 'none', 'important' );
+						hide( sib );
 					}
 				} );
 				widen( builderCol );
 				return;
 			}
 
-			// 3) Classic WooCommerce single-product layout: widen the summary
-			// column and/or the direct child of .product that holds the form.
+			// Fallback 2: classic WooCommerce summary column.
 			if ( product ) {
 				var summary = formEl.closest( '.summary' ) ||
 					formEl.closest( '.entry-summary' ) ||

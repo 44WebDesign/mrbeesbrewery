@@ -27,19 +27,29 @@
 
 			var scope = product || document;
 
-			function widen( el ) {
-				if ( ! el ) {
+			// Clear width/float/margin constraints on a wrapper (safe in any
+			// layout context — does not touch flex-basis, so it won't stretch
+			// vertical widget stacks).
+			function stretch( el ) {
+				if ( ! el || ! el.style ) {
 					return;
 				}
 				el.classList.add( 'pnm-wc-fullwidth-col' );
 				el.style.setProperty( 'width', '100%', 'important' );
 				el.style.setProperty( 'max-width', '100%', 'important' );
-				el.style.setProperty( 'flex', '1 1 100%', 'important' );
-				el.style.setProperty( 'flex-basis', '100%', 'important' );
 				el.style.setProperty( 'float', 'none', 'important' );
-				el.style.setProperty( 'grid-column', '1 / -1', 'important' );
 				el.style.setProperty( 'margin-left', '0', 'important' );
 				el.style.setProperty( 'margin-right', '0', 'important' );
+				el.style.setProperty( 'align-self', 'stretch', 'important' );
+			}
+
+			// A column inside a horizontal row: stretch it and make it consume
+			// the whole row.
+			function widenColumn( el ) {
+				stretch( el );
+				el.style.setProperty( 'flex', '1 1 100%', 'important' );
+				el.style.setProperty( 'flex-basis', '100%', 'important' );
+				el.style.setProperty( 'grid-column', '1 / -1', 'important' );
 			}
 
 			function hide( el ) {
@@ -48,92 +58,77 @@
 				}
 			}
 
-			// Locate the product image / gallery (whatever the theme or builder
-			// calls it) that is NOT part of our own picker.
+			// Is this parent laying its children out horizontally (side by side)?
+			function isRowContainer( parent ) {
+				var cs = window.getComputedStyle( parent );
+				var d  = cs.display;
+				if ( 'flex' === d || 'inline-flex' === d ) {
+					var dir = cs.flexDirection || 'row';
+					return 'row' === dir || 'row-reverse' === dir;
+				}
+				if ( 'grid' === d || 'inline-grid' === d ) {
+					var tpl = cs.gridTemplateColumns || 'none';
+					return 'none' !== tpl && tpl.trim().split( /\s+/ ).length > 1;
+				}
+				return false;
+			}
+
+			// A sibling column is safe to hide if it holds no real text — this
+			// catches an empty image column or an image-only column, while
+			// leaving anything with title/price/description text intact.
+			function isEmptyColumn( el ) {
+				return 0 === ( el.textContent || '' ).replace( /\s+/g, '' ).length;
+			}
+
+			// Hide the product image / gallery element itself, wherever it is.
 			var gallerySelector =
 				'.woocommerce-product-gallery, figure.woocommerce-product-gallery, ' +
 				'.wp-block-woocommerce-product-image-gallery, .wc-block-components-product-image-gallery, ' +
 				'.elementor-widget-woocommerce-product-images, .et_pb_wc_images, ' +
 				'.images, div.images';
-			var galleryEl = null;
-			Array.prototype.some.call( scope.querySelectorAll( gallerySelector ), function ( el ) {
+			Array.prototype.forEach.call( scope.querySelectorAll( gallerySelector ), function ( el ) {
 				if ( ! el.contains( formEl ) ) {
-					galleryEl = el;
-					return true;
+					hide( el );
 				}
-				return false;
 			} );
 
-			// Always hide the gallery element itself.
-			hide( galleryEl );
+			// Climb from the picker to the first real horizontal row. Clear width
+			// constraints on every wrapper on the way (so a max-width'd widget
+			// also goes full width). When the row is found, make the picker's
+			// column fill it and hide any empty sibling column (e.g. the empty
+			// image column that pushes the picker to one side).
+			var stop  = product || document.body;
+			var chain = [];
+			var el    = formEl;
+			var rowChild = null;
+			var rowParent = null;
 
-			// Preferred, builder-agnostic approach: use the actual relationship
-			// between the image and the form. Find their lowest common ancestor,
-			// hide the branch (column) that holds the image, and widen the branch
-			// (column) that holds the form.
-			if ( galleryEl ) {
-				var galleryAncestors = [];
-				for ( var a = galleryEl; a; a = a.parentElement ) {
-					galleryAncestors.push( a );
+			for ( var hops = 0; el && el.parentElement && el !== stop && hops < 16; hops++ ) {
+				var parent = el.parentElement;
+				if ( parent.children.length > 1 && isRowContainer( parent ) ) {
+					rowChild  = el;
+					rowParent = parent;
+					break;
 				}
-
-				var lca = formEl;
-				while ( lca && galleryAncestors.indexOf( lca ) === -1 ) {
-					lca = lca.parentElement;
-				}
-
-				if ( lca ) {
-					var formBranch = formEl;
-					while ( formBranch && formBranch.parentElement !== lca ) {
-						formBranch = formBranch.parentElement;
-					}
-
-					var galleryBranch = galleryEl;
-					while ( galleryBranch && galleryBranch.parentElement !== lca ) {
-						galleryBranch = galleryBranch.parentElement;
-					}
-
-					if ( galleryBranch && galleryBranch !== formBranch ) {
-						hide( galleryBranch );
-					}
-					widen( formBranch );
-					return;
-				}
+				chain.push( el );
+				el = parent;
 			}
 
-			// Fallback 1: known page-builder column classes.
-			var builderCol = formEl.closest(
-				'.et_pb_column, .elementor-column, .wp-block-column, .e-con.e-child'
-			);
-			if ( builderCol && builderCol.parentElement ) {
-				Array.prototype.forEach.call( builderCol.parentElement.children, function ( sib ) {
-					if ( sib === builderCol || sib.contains( formEl ) ) {
-						return;
-					}
-					if ( sib.className && typeof sib.className === 'string' &&
-						/(_column|elementor-column|wp-block-column|e-child)/.test( sib.className ) ) {
+			if ( rowParent ) {
+				chain.forEach( stretch );
+				widenColumn( rowChild );
+				Array.prototype.forEach.call( rowParent.children, function ( sib ) {
+					if ( sib !== rowChild && ! sib.contains( formEl ) && isEmptyColumn( sib ) ) {
 						hide( sib );
 					}
 				} );
-				widen( builderCol );
 				return;
 			}
 
-			// Fallback 2: classic WooCommerce summary column.
-			if ( product ) {
-				var summary = formEl.closest( '.summary' ) ||
-					formEl.closest( '.entry-summary' ) ||
-					formEl.closest( '.product-summary' );
-				widen( summary );
-
-				var child = formEl;
-				while ( child && child.parentElement && child.parentElement !== product ) {
-					child = child.parentElement;
-				}
-				if ( child && child !== summary && child.parentElement === product ) {
-					widen( child );
-				}
-			}
+			// No horizontal row found: the picker is likely constrained by a
+			// max-width on its own widget wrapper. Clear that on the nearest few
+			// wrappers without disturbing the wider page layout.
+			chain.slice( 0, 4 ).forEach( stretch );
 		}() );
 
 		var min = parseInt( $form.data( 'min' ), 10 ) || 1;

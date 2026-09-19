@@ -6,7 +6,7 @@ Tested up to: 6.5
 Requires PHP: 7.2
 WC requires at least: 5.0
 WC tested up to: 9.0
-Stable tag: 1.2.5
+Stable tag: 1.2.6
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -65,6 +65,9 @@ Yes. Each configured box is added as one cart line. Adding another box with the 
 If you enable stock management on the child products, their stock is reduced automatically when the order's stock is reduced. Out-of-stock items can't be added to a box.
 
 == Changelog ==
+
+= 1.2.6 =
+* Full-width layout no longer depends on a product image existing. It climbs from the picker to the first real horizontal row, makes the picker's column fill it, and hides any empty sibling column — fixing Elementor templates where the picker sat in a half-width column beside an empty (imageless) column. Also clears width limits on the picker's own widget wrappers.
 
 = 1.2.5 =
 * Full-width layout is now builder-agnostic: it finds the product image and the picker, works out their common ancestor, then hides the image's column and widens the picker's column. Fixes the picker showing at half width on Elementor (and any other) product templates, without relying on specific column class names.

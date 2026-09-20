@@ -6,7 +6,7 @@ Tested up to: 6.5
 Requires PHP: 7.2
 WC requires at least: 5.0
 WC tested up to: 9.0
-Stable tag: 1.2.6
+Stable tag: 1.3.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -29,6 +29,7 @@ Perfect for things like:
 * Set a **price for each box size** – e.g. 2 treats for £6, 3 for £8, 4 for £10 – or a single price if min = max.
 * Require an exact number of items (min = max) or a range (e.g. between 2 and 4).
 * Pick the selectable products individually and/or by category.
+* Supports variable products: each variation becomes its own selectable item (its own name, price, image and stock).
 * Clean product-page picker with quantity steppers, a live counter and progress bar.
 * Add-to-cart is disabled until the box meets the rules; server-side validation backs it up.
 * Box contents are shown in the cart, at checkout, on the order and in emails.
@@ -65,6 +66,9 @@ Yes. Each configured box is added as one cart line. Adding another box with the 
 If you enable stock management on the child products, their stock is reduced automatically when the order's stock is reduced. Out-of-stock items can't be added to a box.
 
 == Changelog ==
+
+= 1.3.0 =
+* Variable products are now supported. Previously only simple products could be added to a box; now a variable product is expanded into its individual variations, and each in-stock, purchasable variation appears as its own selectable treat (with its own name, price, image and stock). You can also add specific variations directly in the product search.
 
 = 1.2.6 =
 * Full-width layout no longer depends on a product image existing. It climbs from the picker to the first real horizontal row, makes the picker's column fill it, and hides any empty sibling column — fixing Elementor templates where the picker sat in a half-width column beside an empty (imageless) column. Also clears width limits on the picker's own widget wrappers.

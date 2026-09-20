@@ -191,7 +191,7 @@ class PNM_WC_Admin {
 		?>
 		<p class="form-field">
 			<label for="_pnm_products"><?php esc_html_e( 'Selectable products', 'pick-n-mix-for-woocommerce' ); ?></label>
-			<select class="wc-product-search" multiple="multiple" style="width: 50%;" id="_pnm_products" name="_pnm_products[]" data-placeholder="<?php esc_attr_e( 'Search for products…', 'pick-n-mix-for-woocommerce' ); ?>" data-action="woocommerce_json_search_products" data-exclude="<?php echo esc_attr( $post->ID ); ?>">
+			<select class="wc-product-search" multiple="multiple" style="width: 50%;" id="_pnm_products" name="_pnm_products[]" data-placeholder="<?php esc_attr_e( 'Search for products…', 'pick-n-mix-for-woocommerce' ); ?>" data-action="woocommerce_json_search_products_and_variations" data-exclude="<?php echo esc_attr( $post->ID ); ?>">
 				<?php
 				foreach ( $product_ids as $product_id ) {
 					$selectable_product = wc_get_product( $product_id );
@@ -201,7 +201,7 @@ class PNM_WC_Admin {
 				}
 				?>
 			</select>
-			<?php echo wc_help_tip( __( 'Individual simple products the customer can choose from. Combine with categories below if you like.', 'pick-n-mix-for-woocommerce' ) ); ?>
+			<?php echo wc_help_tip( __( 'Products the customer can choose from. Pick simple products or individual variations. If you add a whole variable product, every one of its variations becomes selectable. Combine with categories below if you like.', 'pick-n-mix-for-woocommerce' ) ); ?>
 		</p>
 
 		<p class="form-field">
@@ -221,7 +221,7 @@ class PNM_WC_Admin {
 				}
 				?>
 			</select>
-			<?php echo wc_help_tip( __( 'Every published simple product in these categories becomes selectable.', 'pick-n-mix-for-woocommerce' ) ); ?>
+			<?php echo wc_help_tip( __( 'Every published product in these categories becomes selectable. Variable products are expanded into their individual variations.', 'pick-n-mix-for-woocommerce' ) ); ?>
 		</p>
 		<?php
 

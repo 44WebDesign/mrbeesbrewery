@@ -313,12 +313,34 @@ class WC_Product_Pick_N_Mix extends WC_Product {
 	}
 
 	/**
+	 * Whether a resolved product/variation can be offered as a pick.
+	 *
+	 * @param mixed $product Product or variation object.
+	 * @return bool
+	 */
+	protected function is_selectable_item( $product ) {
+		if ( ! $product instanceof WC_Product ) {
+			return false;
+		}
+		if ( ! in_array( $product->get_type(), array( 'simple', 'variation' ), true ) ) {
+			return false;
+		}
+		if ( 'publish' !== $product->get_status() ) {
+			return false;
+		}
+		return $product->is_purchasable();
+	}
+
+	/**
 	 * Resolve the full list of products the customer can choose from,
 	 * combining the explicit product list and any chosen categories.
 	 *
-	 * Only published, purchasable, in-stock simple products are returned.
+	 * Simple products are added directly. Variable products are expanded into
+	 * their individual variations, so each variation becomes its own selectable
+	 * item (with its own name, price, image and stock). Only published,
+	 * purchasable items are returned.
 	 *
-	 * @return WC_Product[] Keyed by product ID.
+	 * @return WC_Product[] Keyed by product/variation ID.
 	 */
 	public function get_selectable_products() {
 		$ids = $this->get_pnm_products();
@@ -328,7 +350,7 @@ class WC_Product_Pick_N_Mix extends WC_Product {
 			$query_ids = wc_get_products(
 				array(
 					'status'   => 'publish',
-					'type'     => array( 'simple' ),
+					'type'     => array( 'simple', 'variable' ),
 					'limit'    => -1,
 					'return'   => 'ids',
 					'category' => array_map(
@@ -348,13 +370,25 @@ class WC_Product_Pick_N_Mix extends WC_Product {
 
 		foreach ( $ids as $id ) {
 			$product = wc_get_product( $id );
-			if ( ! $product || ! $product->is_type( 'simple' ) ) {
+			if ( ! $product ) {
 				continue;
 			}
-			if ( 'publish' !== $product->get_status() || ! $product->is_purchasable() ) {
+
+			if ( $product->is_type( 'variable' ) ) {
+				// Expand a variable product into its purchasable variations.
+				foreach ( $product->get_children() as $variation_id ) {
+					$variation = wc_get_product( $variation_id );
+					if ( $this->is_selectable_item( $variation ) ) {
+						$available[ $variation_id ] = $variation;
+					}
+				}
 				continue;
 			}
-			$available[ $id ] = $product;
+
+			// Simple products and individually chosen variations.
+			if ( $this->is_selectable_item( $product ) ) {
+				$available[ $id ] = $product;
+			}
 		}
 
 		/**
